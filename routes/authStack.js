@@ -18,19 +18,28 @@ const screens = {
     },
   },
   Login: {
-    screen: Login,
-    navigationOptions: {
-      title: null,
-      headerLeft: null,
-      headerStyle: {
-        elevation: 0,
-        shadowOpacity: 0,
-        borderBottomWidth: 0,
-      },
+    screen: (props) => (
+      <Login
+        {...props}
+        handleAuthenticated={props.navigation.getParam("handleAuthenticated")}
+      />
+    ),
+    navigationOptions: ({ navigation }) => {
+      return {
+        title: null,
+        headerLeft: null,
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+        },
+      };
     },
   },
 };
 
 const HomeStack = createStackNavigator(screens);
 
-export default createAppContainer(HomeStack);
+const AuthNavigator = createAppContainer(HomeStack);
+
+export default AuthNavigator;

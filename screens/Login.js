@@ -13,7 +13,10 @@ import {
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
-export default function Login({ navigation }) {
+export default function Login(props) {
+  const handleAuthenticated = props.screenProps.handleAuthenticated;
+  console.log(handleAuthenticated);
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +28,7 @@ export default function Login({ navigation }) {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      navigation.push("Login");
+      handleAuthenticated();
     }, 2000);
   };
 
@@ -112,7 +115,7 @@ export default function Login({ navigation }) {
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+        <TouchableOpacity>
           <Text style={styles.OAuthDescBottom}>Belum punya akun? Register</Text>
         </TouchableOpacity>
       </ScrollView>

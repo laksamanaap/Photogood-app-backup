@@ -23,7 +23,7 @@ export default function Register({ navigation }) {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      navigation.push("Login");
+      navigation.navigate("Login");
     }, 2000);
   };
 

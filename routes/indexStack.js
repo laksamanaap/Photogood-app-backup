@@ -1,4 +1,4 @@
-import { Text, Platform, View } from "react-native";
+import { Text, Platform, View, TouchableOpacity } from "react-native";
 import Home from "../screens/Home";
 import Detail from "../screens/Detail";
 import { NavigationContainer } from "@react-navigation/native";
@@ -21,7 +21,11 @@ const screenOptions = {
     backround: "#fff",
   },
 };
-export default function App() {
+export default function App(props) {
+  console.log("index props", props);
+  const handleLogout = props.screenProps.handleLogout;
+  console.log(handleLogout);
+
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={screenOptions}>
@@ -63,13 +67,14 @@ export default function App() {
             },
           }}
         />
+        {/* Temporary Logout Example */}
         <Tab.Screen
           name="Upload"
           component={Home}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <View
+                <TouchableOpacity
                   style={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -84,9 +89,10 @@ export default function App() {
                     shadowRadius: 3,
                     elevation: 6,
                   }}
+                  onPress={() => handleLogout()}
                 >
                   <AntDesign name="pluscircleo" size={25} color="#ffffff" />
-                </View>
+                </TouchableOpacity>
               );
             },
           }}

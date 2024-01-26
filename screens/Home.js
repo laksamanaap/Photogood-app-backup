@@ -17,7 +17,9 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 
-const Home = ({ navigation }) => {
+const Home = (props) => {
+  console.log(props);
+
   const [people, setPeople] = useState([
     { name: "shaun", key: 1 },
     { name: "laksa", key: 2 },

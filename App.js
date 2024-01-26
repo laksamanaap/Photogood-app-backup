@@ -14,16 +14,30 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AuthNavigator from "./routes/authStack";
 import ClientNavigator from "./routes/indexStack";
+import Header from "./screens/Header";
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
 
+  const handleAuthenticated = () => {
+    setAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    <Header handleLogout={handleLogout} />;
+    setAuthenticated(false);
+  };
+
   return (
     <>
       {authenticated ? (
-        <ClientNavigator />
+        <>
+          <ClientNavigator screenProps={{ handleLogout: handleLogout }} />
+        </>
       ) : (
-        <AuthNavigator setAuthenticated={setAuthenticated} />
+        <AuthNavigator
+          screenProps={{ handleAuthenticated: handleAuthenticated }}
+        />
       )}
     </>
   );
