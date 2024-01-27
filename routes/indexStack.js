@@ -1,10 +1,12 @@
 import { Text, Platform, View, TouchableOpacity } from "react-native";
 import Home from "../screens/Home";
+import History from "../screens/History";
 import Detail from "../screens/Detail";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Tab = createBottomTabNavigator();
 const screenOptions = {
@@ -49,8 +51,8 @@ export default function App(props) {
           }}
         />
         <Tab.Screen
-          name="Profile"
-          component={Home}
+          name="History"
+          component={History}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -117,7 +119,7 @@ export default function App(props) {
           }}
         />
         <Tab.Screen
-          name="Settings"
+          name="Profile"
           component={Home}
           options={{
             tabBarIcon: ({ focused }) => {
@@ -125,9 +127,9 @@ export default function App(props) {
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
-                  <AntDesign
-                    name="setting"
-                    size={25}
+                  <Ionicons
+                    name="person-circle-outline"
+                    size={28}
                     color={focused ? "#A9329D" : "#111"}
                   />
                 </View>

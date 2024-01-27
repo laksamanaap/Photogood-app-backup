@@ -14,7 +14,8 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AuthNavigator from "./routes/authStack";
 import ClientNavigator from "./routes/indexStack";
-import Header from "./screens/Header";
+import { useFonts } from "expo-font";
+import AppLoading from "./components/AppLoading";
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -24,30 +25,30 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    <Header handleLogout={handleLogout} />;
     setAuthenticated(false);
   };
 
+  let [fontsLoaded] = useFonts({
+    "Poppins-Regular": require("./assets/font/Poppins-Regular.ttf"),
+  });
+
   return (
     <>
-      {authenticated ? (
-        <>
+      <View style={styles.container}>
+        {authenticated ? (
           <ClientNavigator screenProps={{ handleLogout: handleLogout }} />
-        </>
-      ) : (
-        <AuthNavigator
-          screenProps={{ handleAuthenticated: handleAuthenticated }}
-        />
-      )}
+        ) : (
+          <AuthNavigator
+            screenProps={{ handleAuthenticated: handleAuthenticated }}
+          />
+        )}
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    fontFamily: "Poppins-Regular",
   },
 });
