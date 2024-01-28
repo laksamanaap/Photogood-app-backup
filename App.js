@@ -28,27 +28,15 @@ export default function App() {
     setAuthenticated(false);
   };
 
-  let [fontsLoaded] = useFonts({
-    "Poppins-Regular": require("./assets/font/Poppins-Regular.ttf"),
-  });
-
   return (
     <>
-      <View style={styles.container}>
-        {authenticated ? (
-          <ClientNavigator screenProps={{ handleLogout: handleLogout }} />
-        ) : (
-          <AuthNavigator
-            screenProps={{ handleAuthenticated: handleAuthenticated }}
-          />
-        )}
-      </View>
+      {authenticated ? (
+        <ClientNavigator screenProps={{ handleLogout: handleLogout }} />
+      ) : (
+        <AuthNavigator
+          screenProps={{ handleAuthenticated: handleAuthenticated }}
+        />
+      )}
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    fontFamily: "Poppins-Regular",
-  },
-});

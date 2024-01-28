@@ -2,62 +2,60 @@ import { Text, StyleSheet, View, Image, ScrollView } from "react-native";
 import React, { Component } from "react";
 import SearchHistory from "../components/SearchHistory";
 
-export default class History extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <SearchHistory />
-        <ScrollView>
-          <View style={styles.historyWrapper}>
-            <Image
-              style={styles.historyImage}
-              source={require("../assets/images/placeholder-image.png")}
-              resizeMode="contain"
-            />
-            <View style={styles.textWrapper}>
-              <Text style={styles.text}>Anda baru saja menjadi member</Text>
-            </View>
+export default function History() {
+  return (
+    <View style={styles.container}>
+      <SearchHistory />
+      <ScrollView>
+        <View style={styles.historyWrapper}>
+          <Image
+            style={styles.historyImage}
+            source={require("../assets/images/placeholder-image.png")}
+            resizeMode="contain"
+          />
+          <View style={styles.textWrapper}>
+            <Text style={styles.text}>Anda baru saja menjadi member</Text>
           </View>
-          <View style={styles.historyWrapper}>
-            <Image
-              style={styles.historyImage}
-              source={require("../assets/images/placeholder-image.png")}
-              resizeMode="contain"
-            />
-            <View style={styles.textWrapper}>
-              <Text style={styles.text}>
-                Anda baru saja mendownload gambar berjudul "Wave to earth"
-              </Text>
-            </View>
+        </View>
+        <View style={styles.historyWrapper}>
+          <Image
+            style={styles.historyImage}
+            source={require("../assets/images/placeholder-image.png")}
+            resizeMode="contain"
+          />
+          <View style={styles.textWrapper}>
+            <Text style={styles.text}>
+              Anda baru saja mendownload gambar berjudul "Wave to earth"
+            </Text>
           </View>
-          <View style={styles.historyWrapper}>
-            <Image
-              style={styles.historyImage}
-              source={require("../assets/images/placeholder-image.png")}
-              resizeMode="contain"
-            />
-            <View style={styles.textWrapper}>
-              <Text style={styles.text}>
-                Anda baru saja mendownload gambar berjudul "Wave to earth"
-              </Text>
-            </View>
+        </View>
+        <View style={styles.historyWrapper}>
+          <Image
+            style={styles.historyImage}
+            source={require("../assets/images/placeholder-image.png")}
+            resizeMode="contain"
+          />
+          <View style={styles.textWrapper}>
+            <Text style={styles.text}>
+              Anda baru saja mendownload gambar berjudul "Wave to earth"
+            </Text>
           </View>
-          <View style={styles.historyWrapper}>
-            <Image
-              style={styles.historyImage}
-              source={require("../assets/images/placeholder-image.png")}
-              resizeMode="contain"
-            />
-            <View style={styles.textWrapper}>
-              <Text style={styles.text}>
-                Anda baru saja mendownload gambar berjudul "Wave to earth"
-              </Text>
-            </View>
+        </View>
+        <View style={styles.historyWrapper}>
+          <Image
+            style={styles.historyImage}
+            source={require("../assets/images/placeholder-image.png")}
+            resizeMode="contain"
+          />
+          <View style={styles.textWrapper}>
+            <Text style={styles.text}>
+              Anda baru saja mendownload gambar berjudul "Wave to earth"
+            </Text>
           </View>
-        </ScrollView>
-      </View>
-    );
-  }
+        </View>
+      </ScrollView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -81,7 +79,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
   },
   textWrapper: {
     flex: 1,

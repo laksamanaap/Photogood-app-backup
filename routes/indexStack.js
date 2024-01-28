@@ -1,7 +1,9 @@
 import { Text, Platform, View, TouchableOpacity } from "react-native";
 import Home from "../screens/Home";
 import History from "../screens/History";
+import Profile from "../screens/Profile";
 import Detail from "../screens/Detail";
+import Bookmark from "../screens/Bookmark";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -101,7 +103,7 @@ export default function App(props) {
         />
         <Tab.Screen
           name="Bookmark"
-          component={Home}
+          component={Bookmark}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -120,7 +122,7 @@ export default function App(props) {
         />
         <Tab.Screen
           name="Profile"
-          component={Home}
+          component={Profile}
           options={{
             tabBarIcon: ({ focused }) => {
               return (

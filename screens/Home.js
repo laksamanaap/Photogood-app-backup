@@ -17,9 +17,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 
-const Home = (props) => {
-  console.log(props);
-
+export default function Home(props) {
   const [foto, setFoto] = useState([
     { name: "foto", key: 1 },
     { name: "foto", key: 2 },
@@ -157,7 +155,7 @@ const Home = (props) => {
       {renderContent()}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   item: {
@@ -217,5 +215,3 @@ const styles = StyleSheet.create({
     color: "rgba(169, 50, 157, 0.60)",
   },
 });
-
-export default Home;
