@@ -16,6 +16,7 @@ import AuthNavigator from "./routes/authStack";
 import ClientNavigator from "./routes/indexStack";
 import { useFonts } from "expo-font";
 import AppLoading from "./components/AppLoading";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);

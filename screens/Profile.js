@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  ActivityIndicator, // Import ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -17,6 +17,13 @@ export default function Profile() {
   const [isEditable, setIsEditable] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  const [formData, setFormData] = useState({
+    username: "",
+    nama_lengkap: "",
+    email: "",
+    alamat: "",
+  });
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -24,8 +31,6 @@ export default function Profile() {
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
 
     if (!result.cancelled) {
       setImage(result.assets[0].uri);
@@ -43,6 +48,16 @@ export default function Profile() {
       setIsEditable(true);
     }
   };
+
+  const handleChangeText = (key, value) => {
+    setFormData({
+      ...formData,
+      [key]: value,
+    });
+  };
+
+  console.log(formData);
+  console.log(image);
 
   return (
     <View style={{ flex: 1, alignItems: "center", marginTop: 80 }}>
@@ -72,7 +87,8 @@ export default function Profile() {
             style={styles.input}
             editable={isEditable ? true : false}
             placeholder="Username"
-            value="Some Username"
+            value={formData.username}
+            onChangeText={(text) => handleChangeText("username", text)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -81,7 +97,8 @@ export default function Profile() {
             style={styles.input}
             editable={isEditable ? true : false}
             placeholder="Nama Lengkap"
-            value="Some Full Name"
+            value={formData.nama_lengkap}
+            onChangeText={(text) => handleChangeText("nama_lengkap", text)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -90,7 +107,8 @@ export default function Profile() {
             style={styles.input}
             editable={isEditable ? true : false}
             placeholder="Email"
-            value="example@example.com"
+            value={formData.email}
+            onChangeText={(text) => handleChangeText("email", text)}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -99,7 +117,8 @@ export default function Profile() {
             style={styles.input}
             editable={isEditable ? true : false}
             placeholder="Alamat"
-            value="Some Address"
+            value={formData.alamat}
+            onChangeText={(text) => handleChangeText("alamat", text)}
           />
         </View>
         <TouchableOpacity
@@ -114,7 +133,7 @@ export default function Profile() {
               fontSize: 16,
             }}
           >
-            {isEditable ? (isSaving ? "" : "Save Changes") : "Update"}
+            {isEditable ? (isSaving ? "" : "Simpan Perubahan") : "Update"}
           </Text>
           {isSaving && <ActivityIndicator size="small" color="#ffffff" />}
         </TouchableOpacity>

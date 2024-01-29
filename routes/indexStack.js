@@ -2,6 +2,7 @@ import { Text, Platform, View, TouchableOpacity } from "react-native";
 import Home from "../screens/Home";
 import History from "../screens/History";
 import Profile from "../screens/Profile";
+import Upload from "../screens/Upload";
 import Detail from "../screens/Detail";
 import Bookmark from "../screens/Bookmark";
 import { NavigationContainer } from "@react-navigation/native";
@@ -9,6 +10,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 const screenOptions = {
@@ -71,14 +73,13 @@ export default function App(props) {
             },
           }}
         />
-        {/* Temporary Logout Example */}
         <Tab.Screen
           name="Upload"
-          component={Home}
+          component={Upload}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <TouchableOpacity
+                <View
                   style={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -91,12 +92,11 @@ export default function App(props) {
                     shadowOffset: { width: 5, height: 5 },
                     shadowOpacity: 0.5,
                     shadowRadius: 3,
-                    elevation: 6,
+                    elevation: 5,
                   }}
-                  onPress={() => handleLogout()}
                 >
                   <AntDesign name="pluscircleo" size={25} color="#ffffff" />
-                </TouchableOpacity>
+                </View>
               );
             },
           }}
