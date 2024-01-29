@@ -8,7 +8,9 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 
-export default function Bookmark() {
+export default function Bookmark({ navigation }) {
+  console.log("Navigation : ", navigation);
+
   const [profileImage, setProfileImage] = useState(
     require("../assets/images/placeholder-image-3.png")
   );
@@ -16,69 +18,56 @@ export default function Bookmark() {
 
   const posts = [
     {
-      type: "post",
-      key: 1,
+        key: 1,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 2,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 3,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 4,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 5,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 6,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 7,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 8,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 9,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 10,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "post",
       key: 11,
       image: require("../assets/images/placeholder-image-3.png"),
     },
   ];
   const savedItems = [
     {
-      type: "saved",
       key: 1,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
-      type: "saved",
       key: 2,
       image: require("../assets/images/placeholder-image-3.png"),
     },
@@ -109,6 +98,14 @@ export default function Bookmark() {
           source={profileImage}
           resizeMode="contain"
         />
+        <View style={{ marginBottom: 20 }}>
+          <TouchableOpacity
+            style={[styles.tabButton]}
+            onPress={() => navigation.navigate("Profile")}
+          >
+            <Text style={styles.tabButtonText}>Edit Profil</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[
