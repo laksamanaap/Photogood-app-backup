@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
@@ -12,12 +12,22 @@ import {
   Button,
   FlatList,
 } from "react-native";
+import Card from "../components/Card";
 import SearchPhotos from "../components/SearchPhotos";
+import BottomSheetUI from "../components/BottomSheetUI";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
+import MasonryList from "@react-native-seoul/masonry-list";
+import BottomSheet from "@devvie/bottom-sheet";
 
 export default function Home(props) {
+  const [selectedCardID, setSelectedCardID] = useState(null);
+
+  const getRandomHeight = () => {
+    return Math.floor(Math.random() * 50 + 150);
+  };
+
   const [foto, setFoto] = useState([
     { name: "foto", key: 1 },
     { name: "foto", key: 2 },
@@ -30,14 +40,46 @@ export default function Home(props) {
   ]);
 
   const [gif, setGif] = useState([
-    { name: "gif", key: 1 },
-    { name: "gif", key: 2 },
-    { name: "gif", key: 3 },
-    { name: "gif", key: 4 },
-    { name: "gif", key: 5 },
-    { name: "gif", key: 6 },
-    { name: "gif", key: 7 },
-    { name: "gif", key: 8 },
+    {
+      name: "Ini Gif Satu",
+      key: 1,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Dua",
+      key: 2,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Tiga",
+      key: 3,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Empat",
+      key: 4,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Lima",
+      key: 5,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Enam",
+      key: 6,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Satu",
+      key: 7,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Satu",
+      key: 8,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
   ]);
 
   const [vector, setVector] = useState([
@@ -57,6 +99,13 @@ export default function Home(props) {
     setActiveCategory(category);
   };
 
+  const sheetRef = useRef(null);
+
+  const openBottomSheet = (cardID) => {
+    setSelectedCardID(cardID);
+    sheetRef.current?.open();
+  };
+
   const renderContent = () => {
     switch (activeCategory) {
       case "gif":
@@ -64,20 +113,29 @@ export default function Home(props) {
           <FlatList
             data={gif}
             renderItem={({ item }) => (
-              <Text style={styles.item}>{item.name}</Text>
+              <Card text={item.name} image={item.image} />
             )}
             numColumns={2}
           />
         );
       case "foto":
         return (
-          <FlatList
-            data={foto}
-            renderItem={({ item }) => (
-              <Text style={styles.item}>{item.name}</Text>
-            )}
-            numColumns={2}
-          />
+          <>
+            <FlatList
+              data={gif}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => openBottomSheet(item.key)}>
+                  <View style={[styles.card, { height: getRandomHeight() }]}>
+                    <Image source={item.image} style={styles.image} />
+                    <View style={styles.content}>
+                      <Text style={styles.title}>laksa</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              )}
+              numColumns={2}
+            />
+          </>
         );
       case "vector":
         return (
@@ -95,69 +153,83 @@ export default function Home(props) {
   };
 
   return (
-    <View style={styles.container}>
-      <SearchPhotos />
-      <View style={styles.categoryContainer}>
-        <TouchableOpacity
-          style={[
-            styles.category,
-            activeCategory === "gif" && styles.activeCategory,
-          ]}
-          onPress={() => handleCategoryPress("gif")}
-        >
-          <MaterialCommunityIcon
-            name="file-gif-box"
-            size={20}
-            color="#888"
-            style={[activeCategory === "gif" && styles.activeGifIcon]}
-          />
-          <Text style={[activeCategory === "gif" && styles.activeGifCategory]}>
-            GIF
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.category,
-            activeCategory === "foto" && styles.activeCategory,
-          ]}
-          onPress={() => handleCategoryPress("foto")}
-        >
-          <MaterialIcon
-            name="photo-camera"
-            size={20}
-            color="#888"
-            style={[activeCategory === "foto" && styles.activeGifIcon]}
-          />
-          <Text style={[activeCategory === "foto" && styles.activeGifCategory]}>
-            Foto
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.category,
-            activeCategory === "vector" && styles.activeCategory,
-          ]}
-          onPress={() => handleCategoryPress("vector")}
-        >
-          <FontAwesome
-            name="paint-brush"
-            size={20}
-            color="#888"
-            style={[activeCategory === "vector" && styles.activeGifIcon]}
-          />
-          <Text
-            style={[activeCategory === "vector" && styles.activeGifCategory]}
+    <>
+      <View style={styles.container}>
+        <SearchPhotos />
+        <View style={styles.categoryContainer}>
+          <TouchableOpacity
+            style={[
+              styles.category,
+              activeCategory === "gif" && styles.activeCategory,
+            ]}
+            onPress={() => handleCategoryPress("gif")}
           >
-            Vector
-          </Text>
-        </TouchableOpacity>
+            <MaterialCommunityIcon
+              name="file-gif-box"
+              size={20}
+              color="#888"
+              style={[activeCategory === "gif" && styles.activeGifIcon]}
+            />
+            <Text
+              style={[activeCategory === "gif" && styles.activeGifCategory]}
+            >
+              GIF
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.category,
+              activeCategory === "foto" && styles.activeCategory,
+            ]}
+            onPress={() => handleCategoryPress("foto")}
+          >
+            <MaterialIcon
+              name="photo-camera"
+              size={20}
+              color="#888"
+              style={[activeCategory === "foto" && styles.activeGifIcon]}
+            />
+            <Text
+              style={[activeCategory === "foto" && styles.activeGifCategory]}
+            >
+              Foto
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.category,
+              activeCategory === "vector" && styles.activeCategory,
+            ]}
+            onPress={() => handleCategoryPress("vector")}
+          >
+            <FontAwesome
+              name="paint-brush"
+              size={20}
+              color="#888"
+              style={[activeCategory === "vector" && styles.activeGifIcon]}
+            />
+            <Text
+              style={[activeCategory === "vector" && styles.activeGifCategory]}
+            >
+              Vector
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {renderContent()}
       </View>
-      {renderContent()}
-    </View>
+      <BottomSheetUI ref={sheetRef} height={700} id={selectedCardID} />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  bottomSheetContent: {
+    padding: 20,
+    backgroundColor: "white",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: "scroll",
+  },
   item: {
     borderRadius: 8,
     padding: 16,
@@ -213,5 +285,26 @@ const styles = StyleSheet.create({
   },
   activeGifIcon: {
     color: "rgba(169, 50, 157, 0.60)",
+  },
+  card: {
+    borderRadius: 8,
+    marginTop: 24,
+    backgroundColor: "white",
+    height: 200,
+    width: 150,
+    overflow: "hidden",
+    marginRight: 16,
+  },
+  image: {
+    width: "100%",
+    height: "70%",
+    resizeMode: "cover",
+  },
+  content: {
+    padding: 16,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

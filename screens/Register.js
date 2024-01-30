@@ -67,7 +67,7 @@ export default function Register({ navigation }) {
           <TextInput
             style={styles.input}
             placeholder="Password"
-            value={password}
+            value={password}  
             onChangeText={(text) => setPassword(text)}
             secureTextEntry={true}
           />
