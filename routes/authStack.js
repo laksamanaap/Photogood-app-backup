@@ -27,7 +27,6 @@ const screens = {
     navigationOptions: ({ navigation }) => {
       return {
         title: null,
-        headerLeft: null,
         headerStyle: {
           elevation: 0,
           shadowOpacity: 0,

@@ -23,6 +23,8 @@ import BottomSheet from "@devvie/bottom-sheet";
 
 export default function Home(props) {
   const [selectedCardID, setSelectedCardID] = useState(null);
+  const [selectedCardName, setSelectedCardName] = useState(null);
+  const [selectedCardImage, setSelectedCardImage] = useState(null);
 
   const getRandomHeight = () => {
     return Math.floor(Math.random() * 50 + 150);
@@ -43,12 +45,12 @@ export default function Home(props) {
     {
       name: "Ini Gif Satu",
       key: 1,
-      image: require("../assets/images/placeholder-image-3.png"),
+      image: require("../assets/adaptive-icon.png"),
     },
     {
       name: "Ini Gif Dua",
       key: 2,
-      image: require("../assets/images/placeholder-image-3.png"),
+      image: require("../assets/images/kucing.png"),
     },
     {
       name: "Ini Gif Tiga",
@@ -101,8 +103,12 @@ export default function Home(props) {
 
   const sheetRef = useRef(null);
 
-  const openBottomSheet = (cardID) => {
+  const openBottomSheet = (cardID, cardName, cardImage) => {
     setSelectedCardID(cardID);
+    setSelectedCardName(cardName);
+    setSelectedCardImage(cardImage);
+    // console.log("Card Image : ", cardImage);
+    // console.log(cardName);
     sheetRef.current?.open();
   };
 
@@ -124,11 +130,15 @@ export default function Home(props) {
             <FlatList
               data={gif}
               renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => openBottomSheet(item.key)}>
+                <TouchableOpacity
+                  onPress={() =>
+                    openBottomSheet(item.key, item.name, item.image)
+                  }
+                >
                   <View style={[styles.card, { height: getRandomHeight() }]}>
                     <Image source={item.image} style={styles.image} />
                     <View style={styles.content}>
-                      <Text style={styles.title}>laksa</Text>
+                      <Text style={styles.title}>{item.name}</Text>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -151,6 +161,8 @@ export default function Home(props) {
         return null;
     }
   };
+
+  console.log("Card Image : ", selectedCardImage);
 
   return (
     <>
@@ -217,7 +229,13 @@ export default function Home(props) {
         </View>
         {renderContent()}
       </View>
-      <BottomSheetUI ref={sheetRef} height={700} id={selectedCardID} />
+      <BottomSheetUI
+        ref={sheetRef}
+        height={750}
+        id={selectedCardID}
+        name={selectedCardName}
+        image={selectedCardImage}
+      />
     </>
   );
 }
