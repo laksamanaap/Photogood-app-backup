@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Animated,
   Platform,
+  TextInput,
 } from "react-native";
 import BottomSheet from "@devvie/bottom-sheet";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -56,12 +57,43 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
     ],
   };
 
+  const dummyComments = [
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+    },
+  ];
+
   return (
     <BottomSheet
       ref={ref}
-      height={height}
       style={styles.container}
       animationType="slide"
+      height={700}
       containerHeight={Dimensions.get("window").height + 75}
     >
       <View style={styles.contentContainer}>
@@ -93,45 +125,34 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.imageContainer}>
           <Image source={image} style={styles.bottomSheetImage} />
           <TouchableOpacity style={styles.shareButton}>
             <Entypo name={"share"} style={{ color: "#FFF", fontSize: 18 }} />
           </TouchableOpacity>
         </View>
-        <View style={{ marginTop: 25 }}>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
-          <Text>Laksa</Text>
+        <View style={styles.bottomSheetTop}>
+          <Text style={{ fontWeight: "bold", fontSize: 24 }}>Gadis Sampul</Text>
+          <Text style={{ color: "#7C7C7C" }}>24 Februari 2024</Text>
+        </View>
+        <View style={{ marginTop: 25, paddingBottom: 25 }}>
+          <Text style={styles.commentHeader}>Komentar</Text>
+          {dummyComments.map((comment, index) => (
+            <View style={styles.comment} key={index}>
+              <Text style={styles.commentAuthor}>{comment.author}</Text>
+              <Text style={styles.commentText}>{comment.text}</Text>
+            </View>
+          ))}
+          <View style={styles.addComment}>
+            <TextInput
+              style={styles.input}
+              placeholder="Tambahkan komentar..."
+            />
+            <TouchableOpacity style={styles.submitButton}>
+              <Text style={styles.submitButtonText}>Kirim</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
 
@@ -212,5 +233,56 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     width: "100%",
     height: 200,
+  },
+  bottomSheetTop: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  commentContainer: {
+    marginTop: 20,
+  },
+  commentHeader: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  comment: {
+    backgroundColor: "#F5F5F5",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  commentAuthor: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  commentText: {
+    fontSize: 16,
+  },
+  addComment: {
+    marginTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginRight: 10,
+  },
+  submitButton: {
+    backgroundColor: "#A9329D",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  submitButtonText: {
+    color: "#FFF",
+    fontWeight: "bold",
   },
 });
