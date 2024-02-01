@@ -18,8 +18,6 @@ import BottomSheetUI from "../components/BottomSheetUI";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
-import MasonryList from "@react-native-seoul/masonry-list";
-import BottomSheet from "@devvie/bottom-sheet";
 
 export default function Home(props) {
   const [selectedCardID, setSelectedCardID] = useState(null);
@@ -27,7 +25,7 @@ export default function Home(props) {
   const [selectedCardImage, setSelectedCardImage] = useState(null);
 
   const getRandomHeight = () => {
-    return Math.floor(Math.random() * 50 + 150);
+    return Math.floor(Math.random() * 65 + 150);
   };
 
   const [foto, setFoto] = useState([

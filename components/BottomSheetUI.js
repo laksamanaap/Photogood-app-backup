@@ -11,10 +11,12 @@ import {
   Platform,
   TextInput,
 } from "react-native";
+import BottomSheetCommentUI from "./BottomSheetCommentUI";
 import BottomSheet from "@devvie/bottom-sheet";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
+import Feather from "react-native-vector-icons/Feather";
 
 const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
   const [isLoved, setIsLoved] = useState(false);
@@ -61,39 +63,25 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
     {
       author: "Cak Imin Slepet",
       text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
     },
     {
       author: "Cak Imin Slepet",
       text: "Sangar awmu cak!.",
-    },
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
-    },
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
-    },
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
-    },
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
-    },
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
     },
   ];
+
+  const slicedComments = dummyComments.slice(0, 2);
+
+  const sheetRef = useRef(null);
 
   return (
     <BottomSheet
       ref={ref}
       style={styles.container}
       animationType="slide"
-      height={700}
+      height={750}
       containerHeight={Dimensions.get("window").height + 75}
     >
       <View style={styles.contentContainer}>
@@ -136,29 +124,35 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
           <Text style={{ fontWeight: "bold", fontSize: 24 }}>Gadis Sampul</Text>
           <Text style={{ color: "#7C7C7C" }}>24 Februari 2024</Text>
         </View>
-        <View style={{ marginTop: 25, paddingBottom: 25 }}>
-          <Text style={styles.commentHeader}>Komentar</Text>
-          {dummyComments.map((comment, index) => (
+        <View style={styles.commentContainer}>
+          <Text style={{ fontWeight: "bold", fontSize: 16 }}>Komentar</Text>
+          <TouchableOpacity style={styles.button}>
+            <Feather
+              name={"more-horizontal"}
+              style={{ color: "#FFF", fontSize: 18 }}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ marginTop: 8 }}>
+          {slicedComments.map((comment, index) => (
             <View style={styles.comment} key={index}>
-              <Text style={styles.commentAuthor}>{comment.author}</Text>
-              <Text style={styles.commentText}>{comment.text}</Text>
+              <Image
+                source={comment.image}
+                style={{ width: 40, height: 40, borderRadius: 50 }}
+              ></Image>
+              <View>
+                <Text style={styles.commentAuthor}>{comment.author}</Text>
+                <Text style={styles.commentText}>{comment.text}</Text>
+              </View>
             </View>
           ))}
-          <View style={styles.addComment}>
-            <TextInput
-              style={styles.input}
-              placeholder="Tambahkan komentar..."
-            />
-            <TouchableOpacity style={styles.submitButton}>
-              <Text style={styles.submitButtonText}>Kirim</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
 
       <Animated.View style={[styles.loveIcon, loveStyle]}>
         <AntDesign name="heart" style={{ color: "#A9329D", fontSize: 30 }} />
       </Animated.View>
+      <BottomSheetCommentUI />
     </BottomSheet>
   );
 });
@@ -242,7 +236,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   commentContainer: {
-    marginTop: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 25,
   },
   commentHeader: {
     fontWeight: "bold",
@@ -250,17 +248,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   comment: {
-    backgroundColor: "#F5F5F5",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#FFF",
     padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 12,
+    marginTop: 16,
   },
   commentAuthor: {
     fontWeight: "bold",
     marginBottom: 5,
   },
   commentText: {
-    fontSize: 16,
+    fontSize: 15,
   },
   addComment: {
     marginTop: 20,
@@ -284,5 +286,14 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "#FFF",
     fontWeight: "bold",
+  },
+  button: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#A9329D",
+    padding: 4,
+    borderRadius: 50,
+    color: "white",
   },
 });
