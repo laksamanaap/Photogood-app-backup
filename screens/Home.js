@@ -18,6 +18,7 @@ import BottomSheetUI from "../components/BottomSheetUI";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
+import RenderMasonryList from "../components/RenderMasonryList";
 
 export default function Home(props) {
   const [selectedCardID, setSelectedCardID] = useState(null);
@@ -42,42 +43,42 @@ export default function Home(props) {
   const [gif, setGif] = useState([
     {
       name: "Ini Gif Satu",
-      key: 1,
-      image: require("../assets/adaptive-icon.png"),
+      index: 1,
+      image: require("../assets/images/bunga.png"),
     },
     {
       name: "Ini Gif Dua",
-      key: 2,
+      index: 2,
       image: require("../assets/images/kucing.png"),
     },
     {
       name: "Ini Gif Tiga",
-      key: 3,
-      image: require("../assets/images/placeholder-image-3.png"),
+      index: 3,
+      image: require("../assets/images/gigi.png"),
     },
     {
       name: "Ini Gif Empat",
-      key: 4,
-      image: require("../assets/images/placeholder-image-3.png"),
+      index: 4,
+      image: require("../assets/images/kucing.png"),
     },
     {
       name: "Ini Gif Lima",
-      key: 5,
-      image: require("../assets/images/placeholder-image-3.png"),
+      index: 5,
+      image: require("../assets/images/gigi.png"),
     },
     {
       name: "Ini Gif Enam",
-      key: 6,
+      index: 6,
+      image: require("../assets/images/bunga.png"),
+    },
+    {
+      name: "Ini Gif Satu",
+      index: 7,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
       name: "Ini Gif Satu",
-      key: 7,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      name: "Ini Gif Satu",
-      key: 8,
+      index: 8,
       image: require("../assets/images/placeholder-image-3.png"),
     },
   ]);
@@ -93,7 +94,7 @@ export default function Home(props) {
     { name: "vector", key: 8 },
   ]);
 
-  const [activeCategory, setActiveCategory] = useState("gif");
+  const [activeCategory, setActiveCategory] = useState("foto");
 
   const handleCategoryPress = (category) => {
     setActiveCategory(category);
@@ -105,8 +106,6 @@ export default function Home(props) {
     setSelectedCardID(cardID);
     setSelectedCardName(cardName);
     setSelectedCardImage(cardImage);
-    // console.log("Card Image : ", cardImage);
-    // console.log(cardName);
     sheetRef.current?.open();
   };
 
@@ -114,46 +113,29 @@ export default function Home(props) {
     switch (activeCategory) {
       case "gif":
         return (
-          <FlatList
-            data={gif}
-            renderItem={({ item }) => (
-              <Card text={item.name} image={item.image} />
-            )}
-            numColumns={2}
-          />
+          <TouchableOpacity
+            onPress={() => openBottomSheet(item.key, item.name, item.image)}
+          >
+            <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
+          </TouchableOpacity>
         );
       case "foto":
         return (
           <>
-            <FlatList
-              data={gif}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() =>
-                    openBottomSheet(item.key, item.name, item.image)
-                  }
-                >
-                  <View style={[styles.card, { height: getRandomHeight() }]}>
-                    <Image source={item.image} style={styles.image} />
-                    <View style={styles.content}>
-                      <Text style={styles.title}>{item.name}</Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-              numColumns={2}
-            />
+            <TouchableOpacity
+              onPress={() => openBottomSheet(item.key, item.name, item.image)}
+            >
+              <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
+            </TouchableOpacity>
           </>
         );
       case "vector":
         return (
-          <FlatList
-            data={vector}
-            renderItem={({ item }) => (
-              <Text style={styles.item}>{item.name}</Text>
-            )}
-            numColumns={2}
-          />
+          <TouchableOpacity
+            onPress={() => openBottomSheet(item.key, item.name, item.image)}
+          >
+            <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
+          </TouchableOpacity>
         );
       default:
         return null;
@@ -257,8 +239,9 @@ const styles = StyleSheet.create({
   },
   container: {
     marginTop: 30,
-    padding: 35,
+    padding: 20,
   },
+
   category: {
     flexDirection: "row",
     alignItems: "center",
@@ -274,6 +257,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     marginTop: 25,
+    marginBottom: 16,
   },
   inputSearchContainer: {
     flexDirection: "row",
@@ -303,18 +287,13 @@ const styles = StyleSheet.create({
     color: "rgba(169, 50, 157, 0.60)",
   },
   card: {
-    borderRadius: 8,
-    marginTop: 24,
-    backgroundColor: "white",
-    height: 200,
-    width: 150,
-    overflow: "hidden",
-    marginRight: 16,
+    borderRadius: 24,
   },
   image: {
     width: "100%",
-    height: "70%",
+    height: "80%",
     resizeMode: "cover",
+    borderRadius: 20,
   },
   content: {
     padding: 16,

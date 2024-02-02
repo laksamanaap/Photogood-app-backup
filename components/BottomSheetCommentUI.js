@@ -18,58 +18,66 @@ import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
 
 const BottomSheetCommentUI = forwardRef(({ height, id, name, image }, ref) => {
-  const [isLoved, setIsLoved] = useState(false);
-  const [isBookmark, setIsBookmark] = useState(false);
+  console.log("Bottom Sheet Comment : ", ref);
 
   const dummyComments = [
     {
       author: "Cak Imin Slepet",
       text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
     },
     {
       author: "Cak Imin Slepet",
       text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      author: "Cak Imin Slepet",
+      text: "Sangar awmu cak!.",
+      image: require("../assets/images/placeholder-image-3.png"),
     },
   ];
-
-  const slicedComments = dummyComments.slice(0, 2);
 
   return (
     <BottomSheet
       ref={ref}
       style={styles.container}
       animationType="slide"
-      height={750}
       containerHeight={Dimensions.get("window").height + 75}
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.imageContainer}>
-          <Image source={image} style={styles.bottomSheetImage} />
-          <TouchableOpacity style={styles.shareButton}>
-            <Entypo name={"share"} style={{ color: "#FFF", fontSize: 18 }} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.bottomSheetTop}>
-          <Text style={{ fontWeight: "bold", fontSize: 24 }}>Gadis Sampul</Text>
-          <Text style={{ color: "#7C7C7C" }}>24 Februari 2024</Text>
-        </View>
-        <View style={styles.commentContainer}>
-          <Text style={{ fontWeight: "bold", fontSize: 16 }}>Komentar</Text>
-          <TouchableOpacity style={styles.button}>
-            <Feather
-              name={"more-horizontal"}
-              style={{ color: "#FFF", fontSize: 18 }}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={{ marginTop: 8 }}>
-          {slicedComments.map((comment, index) => (
-            <View style={styles.comment} key={index}>
+      <ScrollView>
+        {dummyComments.map((comment, index) => (
+          <View style={styles.comment} key={index}>
+            <Image
+              source={comment.image}
+              style={{ width: 40, height: 40, borderRadius: 50 }}
+            ></Image>
+            <View>
               <Text style={styles.commentAuthor}>{comment.author}</Text>
               <Text style={styles.commentText}>{comment.text}</Text>
             </View>
-          ))}
-        </View>
+          </View>
+        ))}
       </ScrollView>
     </BottomSheet>
   );
@@ -77,4 +85,51 @@ const BottomSheetCommentUI = forwardRef(({ height, id, name, image }, ref) => {
 
 export default BottomSheetCommentUI;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
+  commentContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 25,
+  },
+  commentHeader: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  comment: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#FFF",
+    padding: 10,
+    borderRadius: 12,
+    marginTop: 16,
+    marginBottom: 12,
+  },
+  commentAuthor: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  commentText: {
+    fontSize: 15,
+  },
+  addComment: {
+    marginTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginRight: 10,
+  },
+});

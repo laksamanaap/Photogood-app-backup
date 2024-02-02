@@ -76,6 +76,10 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
 
   const sheetRef = useRef(null);
 
+  const openBottomSheet = () => {
+    sheetRef.current?.open();
+  };
+
   return (
     <BottomSheet
       ref={ref}
@@ -126,7 +130,10 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
         </View>
         <View style={styles.commentContainer}>
           <Text style={{ fontWeight: "bold", fontSize: 16 }}>Komentar</Text>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => openBottomSheet()}
+          >
             <Feather
               name={"more-horizontal"}
               style={{ color: "#FFF", fontSize: 18 }}
@@ -152,7 +159,7 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
       <Animated.View style={[styles.loveIcon, loveStyle]}>
         <AntDesign name="heart" style={{ color: "#A9329D", fontSize: 30 }} />
       </Animated.View>
-      <BottomSheetCommentUI />
+      <BottomSheetCommentUI ref={sheetRef} />
     </BottomSheet>
   );
 });

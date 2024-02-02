@@ -4,21 +4,79 @@ import {
   View,
   Image,
   TouchableOpacity,
+  ScrollView,
   FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import RenderMasonryList from "../components/RenderMasonryList";
+import BottomSheetUI from "../components/BottomSheetUI";
 
 export default function Bookmark({ navigation }) {
-  console.log("Navigation : ", navigation);
-
+  const [selectedCardID, setSelectedCardID] = useState(null);
+  const [selectedCardName, setSelectedCardName] = useState(null);
+  const [selectedCardImage, setSelectedCardImage] = useState(null);
   const [profileImage, setProfileImage] = useState(
     require("../assets/images/placeholder-image-3.png")
   );
+  console.log("Navigation : ", navigation);
+
   const [activeTab, setActiveTab] = useState("posts");
+
+  const sheetRef = useRef(null);
+
+  const openBottomSheet = (cardID, cardName, cardImage) => {
+    setSelectedCardID(cardID);
+    setSelectedCardName(cardName);
+    setSelectedCardImage(cardImage);
+    sheetRef.current?.open();
+  };
+
+  const [gif, setGif] = useState([
+    {
+      name: "Ini Gif Satu",
+      index: 1,
+      image: require("../assets/images/bunga.png"),
+    },
+    {
+      name: "Ini Gif Dua",
+      index: 2,
+      image: require("../assets/images/kucing.png"),
+    },
+    {
+      name: "Ini Gif Tiga",
+      index: 3,
+      image: require("../assets/images/gigi.png"),
+    },
+    {
+      name: "Ini Gif Empat",
+      index: 4,
+      image: require("../assets/images/kucing.png"),
+    },
+    {
+      name: "Ini Gif Lima",
+      index: 5,
+      image: require("../assets/images/gigi.png"),
+    },
+    {
+      name: "Ini Gif Enam",
+      index: 6,
+      image: require("../assets/images/bunga.png"),
+    },
+    {
+      name: "Ini Gif Satu",
+      index: 7,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Satu",
+      index: 8,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+  ]);
 
   const posts = [
     {
-        key: 1,
+      key: 1,
       image: require("../assets/images/placeholder-image-3.png"),
     },
     {
@@ -62,6 +120,7 @@ export default function Bookmark({ navigation }) {
       image: require("../assets/images/placeholder-image-3.png"),
     },
   ];
+
   const savedItems = [
     {
       key: 1,
@@ -78,57 +137,70 @@ export default function Bookmark({ navigation }) {
   };
 
   const renderContent = () => {
-    const data = activeTab === "posts" ? posts : savedItems;
     return (
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <Image source={item.image} style={styles.itemImage} />
-        )}
-        numColumns={2}
-      />
+      <TouchableOpacity
+        onPress={() => openBottomSheet(item.key, item.name, item.image)}
+      >
+        <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
+      </TouchableOpacity>
     );
   };
 
   return (
-    <View style={{ flex: 1, marginTop: 30, alignItems: "center" }}>
-      <View style={styles.container}>
-        <Image
-          style={styles.profileImage}
-          source={profileImage}
-          resizeMode="contain"
-        />
-        <View style={{ marginBottom: 20 }}>
-          <TouchableOpacity
-            style={[styles.tabButton]}
-            onPress={() => navigation.navigate("Profile")}
-          >
-            <Text style={styles.tabButtonText}>Edit Profil</Text>
-          </TouchableOpacity>
+    <>
+      <View style={{}}>
+        <View style={styles.container}>
+          <Image
+            style={styles.profileImage}
+            source={profileImage}
+            resizeMode="contain"
+          />
+          <View style={{ marginBottom: 20 }}>
+            <TouchableOpacity
+              style={[styles.tabButton]}
+              onPress={() => navigation.navigate("Profile")}
+            >
+              <Text style={styles.tabButtonText}>Edit Profil</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                activeTab === "posts" && styles.activeTabButton,
+              ]}
+              onPress={() => handleTabChange("posts")}
+            >
+              <Text style={styles.tabButtonText}>Postingan Anda</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                activeTab === "saved" && styles.activeTabButton,
+              ]}
+              onPress={() => handleTabChange("saved")}
+            >
+              <Text style={styles.tabButtonText}>Disimpan</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.buttonContainer}>
+        {/* {renderContent()} */}
+        <ScrollView>
           <TouchableOpacity
-            style={[
-              styles.tabButton,
-              activeTab === "posts" && styles.activeTabButton,
-            ]}
-            onPress={() => handleTabChange("posts")}
+            onPress={() => openBottomSheet(item.key, item.name, item.image)}
           >
-            <Text style={styles.tabButtonText}>Postingan Anda</Text>
+            <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.tabButton,
-              activeTab === "saved" && styles.activeTabButton,
-            ]}
-            onPress={() => handleTabChange("saved")}
-          >
-            <Text style={styles.tabButtonText}>Disimpan</Text>
-          </TouchableOpacity>
-        </View>
+        </ScrollView>
       </View>
-      {renderContent()}
-    </View>
+      <BottomSheetUI
+        ref={sheetRef}
+        height={750}
+        id={selectedCardID}
+        name={selectedCardName}
+        image={selectedCardImage}
+      />
+    </>
   );
 }
 
