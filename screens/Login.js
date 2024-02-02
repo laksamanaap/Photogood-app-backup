@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Entypo from "react-native-vector-icons/Entypo";
 
 export default function Login(props) {
   const handleAuthenticated = props.screenProps.handleAuthenticated;
@@ -21,6 +22,7 @@ export default function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   console.log("login username : ", username);
 
@@ -30,6 +32,10 @@ export default function Login(props) {
       setIsLoading(false);
       handleAuthenticated();
     }, 2000);
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -55,13 +61,30 @@ export default function Login(props) {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry={true}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity
+              style={{ position: "absolute", right: 12, top: 12 }}
+              onPress={toggleShowPassword}
+            >
+              <Entypo
+                name={showPassword ? "eye-with-line" : "eye"}
+                style={{ color: "#7C7C7C", fontSize: 20 }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <TouchableOpacity
           style={styles.button}

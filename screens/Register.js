@@ -12,11 +12,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import Entypo from "react-native-vector-icons/Entypo";
 
 export default function Register({ navigation }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = () => {
@@ -27,9 +29,9 @@ export default function Register({ navigation }) {
     }, 2000);
   };
 
-  console.log("Username : ", username);
-  console.log("Email : ", email);
-  console.log("Password : ", password);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -64,13 +66,30 @@ export default function Register({ navigation }) {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}  
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry={true}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              position: "relative",
+            }}
+          >
+            <TextInput
+              style={[styles.input, { flex: 1 }]}
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity
+              style={{ position: "absolute", right: 12, top: 12 }}
+              onPress={toggleShowPassword}
+            >
+              <Entypo
+                name={showPassword ? "eye-with-line" : "eye"}
+                style={{ color: "#7C7C7C", fontSize: 20 }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <TouchableOpacity
           style={styles.button}
@@ -148,6 +167,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   input: {
+    position: "relative",
     backgroundColor: "#ECECEC",
     height: 40,
     width: "100%",

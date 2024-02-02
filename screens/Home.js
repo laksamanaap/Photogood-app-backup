@@ -81,6 +81,16 @@ export default function Home(props) {
       index: 8,
       image: require("../assets/images/placeholder-image-3.png"),
     },
+    {
+      name: "Ini Gif Satu",
+      index: 9,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
+    {
+      name: "Ini Gif Satu",
+      index: 10,
+      image: require("../assets/images/placeholder-image-3.png"),
+    },
   ]);
 
   const [vector, setVector] = useState([
