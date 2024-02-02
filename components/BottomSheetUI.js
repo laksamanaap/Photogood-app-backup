@@ -17,10 +17,12 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
+import Fontisto from "react-native-vector-icons/Fontisto";
 
 const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
   const [isLoved, setIsLoved] = useState(false);
   const [isBookmark, setIsBookmark] = useState(false);
+  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
   const loveAnimation = useRef(new Animated.Value(0)).current;
 
   const toggleLove = () => {
@@ -80,12 +82,16 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
     sheetRef.current?.open();
   };
 
+  const toggleMenu = () => {
+    setIsMenuExpanded(!isMenuExpanded);
+  };
+
   return (
     <BottomSheet
       ref={ref}
       style={styles.container}
       animationType="slide"
-      height={750}
+      height={height}
       containerHeight={Dimensions.get("window").height + 75}
     >
       <View style={styles.contentContainer}>
@@ -120,9 +126,36 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.imageContainer}>
           <Image source={image} style={styles.bottomSheetImage} />
-          <TouchableOpacity style={styles.shareButton}>
-            <Entypo name={"share"} style={{ color: "#FFF", fontSize: 18 }} />
-          </TouchableOpacity>
+          {isMenuExpanded ? (
+            <>
+              <View style={styles.downloadIcons}>
+                <TouchableOpacity
+                  style={styles.downloadIcon}
+                  onPress={toggleMenu}
+                >
+                  <Entypo
+                    name={"download"}
+                    style={{ color: "#FFF", fontSize: 16 }}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.menuIcons}>
+                <TouchableOpacity style={styles.menuIcon} onPress={toggleMenu}>
+                  <Entypo
+                    name={"share"}
+                    style={{ color: "#FFF", fontSize: 16 }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : (
+            <TouchableOpacity style={styles.moreButton} onPress={toggleMenu}>
+              <Feather
+                name={"more-horizontal"}
+                style={{ color: "#FFF", fontSize: 20 }}
+              />
+            </TouchableOpacity>
+          )}
         </View>
         <View style={styles.bottomSheetTop}>
           <Text style={{ fontWeight: "bold", fontSize: 24 }}>Gadis Sampul</Text>
@@ -180,7 +213,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: "relative",
   },
-  shareButton: {
+  moreButton: {
     position: "absolute",
     top: 15,
     right: 15,
@@ -189,7 +222,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#A9329D",
-    padding: 5,
+    padding: 4,
     borderRadius: 60,
   },
   buttonContainer: {
@@ -302,5 +335,45 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 50,
     color: "white",
+  },
+  buttonDownload: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#A9329D",
+    color: "white",
+    borderRadius: 50,
+    padding: 7,
+    marginTop: 20,
+  },
+  menuIcons: {
+    position: "absolute",
+    top: 15,
+    right: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#A9329D",
+    padding: 6,
+    borderRadius: 60,
+    zIndex: 1,
+  },
+  downloadIcons: {
+    position: "absolute",
+    top: 15,
+    right: 65,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#A9329D",
+    padding: 6,
+    borderRadius: 60,
+    zIndex: 1,
+  },
+  menuIcon: {
+    marginHorizontal: 5,
+  },
+  downloadIcon: {
+    marginHorizontal: 5,
   },
 });

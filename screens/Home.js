@@ -221,7 +221,7 @@ export default function Home(props) {
       </View>
       <BottomSheetUI
         ref={sheetRef}
-        height={750}
+        height={685}
         id={selectedCardID}
         name={selectedCardName}
         image={selectedCardImage}

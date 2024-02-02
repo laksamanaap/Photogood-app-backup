@@ -18,7 +18,7 @@ const RenderMasonryList = ({ gif, openBottomSheet }) => {
 
   return (
     <ScrollView>
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", paddingBottom: 100 }}>
         <View style={{ flex: 1, flexDirection: "column" }}>
           {oddItems.map((item, index) => (
             <TouchableOpacity

@@ -185,7 +185,7 @@ export default function Bookmark({ navigation }) {
           </View>
         </View>
         {/* {renderContent()} */}
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ marginBottom: 100 }}>
           <TouchableOpacity
             onPress={() => openBottomSheet(item.key, item.name, item.image)}
           >
@@ -195,7 +195,7 @@ export default function Bookmark({ navigation }) {
       </View>
       <BottomSheetUI
         ref={sheetRef}
-        height={750}
+        height={685}
         id={selectedCardID}
         name={selectedCardName}
         image={selectedCardImage}
