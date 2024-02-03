@@ -148,7 +148,7 @@ export default function Bookmark({ navigation }) {
 
   return (
     <>
-      <View style={{}}>
+      <View style={{ padding: 20 }}>
         <View style={styles.container}>
           <Image
             style={styles.profileImage}
@@ -171,7 +171,15 @@ export default function Bookmark({ navigation }) {
               ]}
               onPress={() => handleTabChange("posts")}
             >
-              <Text style={styles.tabButtonText}>Postingan Anda</Text>
+              <Text
+                style={
+                  activeTab === "posts"
+                    ? styles.tabButtonTextBold
+                    : styles.tabButtonText
+                }
+              >
+                Postingan Anda
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -180,7 +188,15 @@ export default function Bookmark({ navigation }) {
               ]}
               onPress={() => handleTabChange("saved")}
             >
-              <Text style={styles.tabButtonText}>Disimpan</Text>
+              <Text
+                style={
+                  activeTab === "saved"
+                    ? styles.tabButtonTextBold
+                    : styles.tabButtonText
+                }
+              >
+                Disimpan
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -233,6 +249,12 @@ const styles = StyleSheet.create({
   tabButtonText: {
     color: "#000000",
     fontSize: 14,
+    fontFamily: "Poppins-Regular",
+  },
+  tabButtonTextBold: {
+    color: "#000000",
+    fontSize: 14,
+    fontFamily: "Poppins-Bold",
   },
   itemImage: {
     display: "flex",

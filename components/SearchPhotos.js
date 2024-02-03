@@ -14,19 +14,19 @@ import {
 import React, { Component } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
-export default class SearchPhotos extends Component {
-  render() {
-    return (
-      <View style={styles.inputSearchContainer}>
-        <AntDesign name="search1" size={20} color="#888" style={styles.icon} />
-        <TextInput
-          style={styles.inputSearch}
-          placeholder="Temukan Lebih Banyak"
-        />
-      </View>
-    );
-  }
-}
+const SearchPhotos = () => {
+  return (
+    <View style={styles.inputSearchContainer}>
+      <AntDesign name="search1" size={20} color="#888" style={styles.icon} />
+      <TextInput
+        style={styles.inputSearch}
+        placeholder="Temukan Lebih Banyak"
+      />
+    </View>
+  );
+};
+
+export default SearchPhotos;
 
 const styles = StyleSheet.create({
   inputSearchContainer: {
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 5,
     fontSize: 14,
+    fontFamily: "Poppins-Regular",
   },
   icon: {
     marginRight: 10,

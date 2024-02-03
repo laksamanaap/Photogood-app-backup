@@ -17,6 +17,7 @@
     "@react-native-seoul/masonry-list": "^1.4.2",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
+    "@react-navigation/stack": "^6.3.20",
     "@types/react": "~18.2.45",
     "axios": "^1.6.5",
     "expo": "~50.0.2",

@@ -123,29 +123,17 @@ export default function Home(props) {
     switch (activeCategory) {
       case "gif":
         return (
-          <TouchableOpacity
-            onPress={() => openBottomSheet(item.key, item.name, item.image)}
-          >
-            <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
-          </TouchableOpacity>
+          <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
         );
       case "foto":
         return (
           <>
-            <TouchableOpacity
-              onPress={() => openBottomSheet(item.key, item.name, item.image)}
-            >
-              <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
-            </TouchableOpacity>
+            <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
           </>
         );
       case "vector":
         return (
-          <TouchableOpacity
-            onPress={() => openBottomSheet(item.key, item.name, item.image)}
-          >
-            <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
-          </TouchableOpacity>
+          <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
         );
       default:
         return null;
@@ -192,7 +180,11 @@ export default function Home(props) {
               style={[activeCategory === "foto" && styles.activeGifIcon]}
             />
             <Text
-              style={[activeCategory === "foto" && styles.activeGifCategory]}
+              style={[
+                activeCategory === "foto"
+                  ? styles.activeGifCategory
+                  : styles.text,
+              ]}
             >
               Foto
             </Text>
@@ -211,7 +203,11 @@ export default function Home(props) {
               style={[activeCategory === "vector" && styles.activeGifIcon]}
             />
             <Text
-              style={[activeCategory === "vector" && styles.activeGifCategory]}
+              style={[
+                activeCategory === "vector"
+                  ? styles.activeGifCategory
+                  : styles.text,
+              ]}
             >
               Vector
             </Text>
@@ -248,8 +244,9 @@ const styles = StyleSheet.create({
     width: "50%",
   },
   container: {
-    marginTop: 30,
+    marginTop: 35,
     padding: 20,
+    fontFamily: "Poppins-Regular",
   },
 
   category: {
@@ -268,6 +265,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 25,
     marginBottom: 16,
+    fontFamily: "Poppins-Regular",
   },
   inputSearchContainer: {
     flexDirection: "row",
@@ -291,7 +289,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(169, 50, 157, 0.20)",
   },
   activeGifCategory: {
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
   },
   activeGifIcon: {
     color: "rgba(169, 50, 157, 0.60)",
@@ -311,5 +309,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  text: {
+    fontFamily: "Poppins-Regular",
+  },
+  textBold: {
+    fontFamily: "Poppins-Bold",
   },
 });

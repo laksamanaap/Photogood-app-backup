@@ -17,7 +17,6 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
-import Fontisto from "react-native-vector-icons/Fontisto";
 
 const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
   const [isLoved, setIsLoved] = useState(false);
@@ -100,7 +99,7 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
             source={image}
             style={{ width: 50, height: 50, borderRadius: 100 }}
           />
-          <Text style={{ fontWeight: "bold" }}>Laksamana</Text>
+          <Text style={styles.textBold}>Laksamana</Text>
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -158,11 +157,13 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
           )}
         </View>
         <View style={styles.bottomSheetTop}>
-          <Text style={{ fontWeight: "bold", fontSize: 24 }}>Gadis Sampul</Text>
-          <Text style={{ color: "#7C7C7C" }}>24 Februari 2024</Text>
+          <Text style={[styles.textBold, { fontSize: 24 }]}>Gadis Sampul</Text>
+          <Text style={[styles.text, { color: "#7C7C7C" }]}>
+            24 Februari 2024
+          </Text>
         </View>
         <View style={styles.commentContainer}>
-          <Text style={{ fontWeight: "bold", fontSize: 16 }}>Komentar</Text>
+          <Text style={[styles.text, { fontSize: 16 }]}>Komentar</Text>
           <TouchableOpacity
             style={styles.button}
             onPress={() => openBottomSheet()}
@@ -298,10 +299,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   commentAuthor: {
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
     marginBottom: 5,
   },
   commentText: {
+    fontFamily: "Poppins-Regular",
     fontSize: 15,
   },
   addComment: {
@@ -375,5 +377,11 @@ const styles = StyleSheet.create({
   },
   downloadIcon: {
     marginHorizontal: 5,
+  },
+  text: {
+    fontFamily: "Poppins-Regular",
+  },
+  textBold: {
+    fontFamily: "Poppins-Bold",
   },
 });

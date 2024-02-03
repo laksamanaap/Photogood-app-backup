@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 5,
     fontSize: 14,
+    fontFamily: "Poppins-Regular",
   },
   icon: {
     marginRight: 10,

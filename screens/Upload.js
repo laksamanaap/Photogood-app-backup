@@ -64,7 +64,11 @@ export default function Upload() {
     <View style={styles.container}>
       <View style={styles.imagePreview}>
         {image && <Image source={{ uri: image }} style={styles.previewImage} />}
-        {!image && <Text>No image selected</Text>}
+        {!image && (
+          <Text style={{ fontFamily: "Poppins-Regular" }}>
+            No image selected
+          </Text>
+        )}
       </View>
 
       <View style={styles.buttonContainer}>
@@ -108,6 +112,7 @@ export default function Upload() {
             }}
             textStyle={{
               color: "#888",
+              fontFamily: "Poppins-Regular",
             }}
             arrowStyle={{
               color: "#888",
@@ -125,6 +130,7 @@ export default function Upload() {
                 color: "white",
                 textAlign: "center",
                 fontSize: 16,
+                fontFamily: "Poppins-Regular",
               }}
             >
               {isSaving ? "" : "Upload Gambar"}
@@ -173,10 +179,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#A9329D",
     minWidth: 100,
-    padding: 10,
+    padding: 8,
     borderRadius: 50,
+    fontFamily: "Poppins-Regular",
   },
   buttonText: {
+    fontFamily: "Poppins-Regular",
     color: "#fff",
     fontSize: 14,
   },
@@ -184,10 +192,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   label: {
+    fontFamily: "Poppins-Regular",
     marginBottom: 10,
     color: "#333",
   },
   input: {
+    fontFamily: "Poppins-Regular",
     backgroundColor: "#ECECEC",
     height: 40,
     width: "100%",

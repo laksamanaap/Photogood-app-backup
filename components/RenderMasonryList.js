@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 8,
     overflow: "hidden",
+    position: "relative",
   },
   image: {
     width: "100%",

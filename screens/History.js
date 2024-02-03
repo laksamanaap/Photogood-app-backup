@@ -85,5 +85,6 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 10,
+    fontFamily: "Poppins-Regular",
   },
 });

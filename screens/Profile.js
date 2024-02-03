@@ -131,6 +131,7 @@ export default function Profile() {
               color: "white",
               textAlign: "center",
               fontSize: 16,
+              fontFamily: "Poppins-Regular",
             }}
           >
             {isEditable ? (isSaving ? "" : "Simpan Perubahan") : "Update"}
@@ -157,6 +158,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 10,
     color: "#333",
+    fontFamily: "Poppins-Regular",
   },
   input: {
     backgroundColor: "#ECECEC",
@@ -167,6 +169,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     padding: 10,
     borderRadius: 50,
+    fontFamily: "Poppins-Regular",
   },
   button: {
     display: "flex",

@@ -46,16 +46,6 @@ const BottomSheetCommentUI = forwardRef(({ height, id, name, image }, ref) => {
       text: "Sangar awmu cak!.",
       image: require("../assets/images/placeholder-image-3.png"),
     },
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
   ];
 
   return (
@@ -65,6 +55,9 @@ const BottomSheetCommentUI = forwardRef(({ height, id, name, image }, ref) => {
       animationType="slide"
       containerHeight={Dimensions.get("window").height + 75}
     >
+      <Text style={[styles.text, { marginBottom: 12, textAlign: "center" }]}>
+        14 Komentar
+      </Text>
       <ScrollView>
         {dummyComments.map((comment, index) => (
           <View style={styles.comment} key={index}>
@@ -113,10 +106,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   commentAuthor: {
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
     marginBottom: 5,
   },
   commentText: {
+    fontFamily: "Poppins-Regular",
     fontSize: 15,
   },
   addComment: {
@@ -131,5 +125,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginRight: 10,
+  },
+  text: {
+    fontFamily: "Poppins-Bold",
   },
 });
