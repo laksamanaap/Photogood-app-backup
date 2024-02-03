@@ -3,8 +3,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
+import Entypo from "react-native-vector-icons/Entypo";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { View, Platform } from "react-native";
+import { View, Platform, TouchableOpacity } from "react-native";
 import { useLoadFonts } from "../components/Fonts";
 
 // Screen
@@ -130,7 +132,35 @@ const App = () => {
           component={MainTabs}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen
+          options={({ navigation }) => ({
+            title: null,
+            headerShown: true,
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              borderBottomWidth: 0,
+              backgroundColor: "transparent",
+            },
+            headerLeft: () => (
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <View
+                  style={{
+                    marginTop: 16,
+                    marginLeft: 16,
+                    backgroundColor: "#A9329D",
+                    borderRadius: 50,
+                    padding: 4,
+                  }}
+                >
+                  <Entypo name="chevron-left" size={24} color="white" />
+                </View>
+              </TouchableOpacity>
+            ),
+          })}
+          name="Profile"
+          component={Profile}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

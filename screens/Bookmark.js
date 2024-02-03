@@ -137,13 +137,7 @@ export default function Bookmark({ navigation }) {
   };
 
   const renderContent = () => {
-    return (
-      <TouchableOpacity
-        onPress={() => openBottomSheet(item.key, item.name, item.image)}
-      >
-        <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
-      </TouchableOpacity>
-    );
+    return <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />;
   };
 
   return (
@@ -200,14 +194,7 @@ export default function Bookmark({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-        {/* {renderContent()} */}
-        <ScrollView contentContainerStyle={{ marginBottom: 100 }}>
-          <TouchableOpacity
-            onPress={() => openBottomSheet(item.key, item.name, item.image)}
-          >
-            <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
-          </TouchableOpacity>
-        </ScrollView>
+        <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
       </View>
       <BottomSheetUI
         ref={sheetRef}
