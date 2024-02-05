@@ -153,7 +153,7 @@ const App = () => {
                     padding: 4,
                   }}
                 >
-                  <Entypo name="chevron-left" size={24} color="white" />
+                  <Entypo name="chevron-left" size={26} color="white" />
                 </View>
               </TouchableOpacity>
             ),

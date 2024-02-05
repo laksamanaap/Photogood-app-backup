@@ -145,7 +145,7 @@ export default function Upload() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 60,
+    marginTop: 40,
     padding: 35,
     alignItems: "center",
     justifyContent: "center",

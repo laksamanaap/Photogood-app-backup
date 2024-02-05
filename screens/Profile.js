@@ -60,7 +60,7 @@ export default function Profile() {
   console.log(image);
 
   return (
-    <View style={{ flex: 1, alignItems: "center", marginTop: 80 }}>
+    <View style={{ flex: 1, alignItems: "center", marginTop: 40 }}>
       <View>
         {image ? (
           <Image
@@ -84,7 +84,7 @@ export default function Profile() {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Username</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, !isEditable && styles.disabledInput]}
             editable={isEditable ? true : false}
             placeholder="Username"
             value={formData.username}
@@ -94,7 +94,7 @@ export default function Profile() {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nama Lengkap</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, !isEditable && styles.disabledInput]}
             editable={isEditable ? true : false}
             placeholder="Nama Lengkap"
             value={formData.nama_lengkap}
@@ -104,7 +104,7 @@ export default function Profile() {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Email</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, !isEditable && styles.disabledInput]}
             editable={isEditable ? true : false}
             placeholder="Email"
             value={formData.email}
@@ -114,7 +114,7 @@ export default function Profile() {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Alamat</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, !isEditable && styles.disabledInput]}
             editable={isEditable ? true : false}
             placeholder="Alamat"
             value={formData.alamat}
@@ -180,5 +180,8 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 10,
     borderRadius: 50,
+  },
+  disabledInput: {
+    backgroundColor: "#d3d3d3",
   },
 });

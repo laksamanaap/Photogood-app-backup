@@ -13,8 +13,15 @@ import {
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
+import { useLoadFonts } from "../components/Fonts";
 
 export default function Login(props) {
+  const fontsLoaded = useLoadFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   const handleAuthenticated = props.screenProps.handleAuthenticated;
   console.log(handleAuthenticated);
 
@@ -114,6 +121,7 @@ export default function Login(props) {
                 textAlign: "center",
                 fontSize: 16,
                 fontWeight: "500",
+                fontFamily: "Poppins-Regular",
               }}
             >
               Google
@@ -132,6 +140,7 @@ export default function Login(props) {
                 textAlign: "center",
                 fontSize: 16,
                 fontWeight: "500",
+                fontFamily: "Poppins-Regular",
               }}
             >
               Facebook
@@ -160,8 +169,10 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 10,
     color: "#333",
+    fontFamily: "Poppins-Regular",
   },
   input: {
+    fontFamily: "Poppins-Regular",
     backgroundColor: "#ECECEC",
     height: 40,
     width: "100%",
@@ -188,6 +199,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 15,
     color: "#6B6B6B",
+    fontFamily: "Poppins-Regular",
   },
   OAuthDescBottom: {
     display: "flex",
@@ -197,6 +209,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: "#6B6B6B",
     fontSize: 16,
+    fontFamily: "Poppins-Regular",
   },
   OAuthButton: {
     display: "flex",

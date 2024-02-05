@@ -13,8 +13,15 @@ import {
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
+import { useLoadFonts } from "../components/Fonts";
 
 export default function Register({ navigation }) {
+  const fontsLoaded = useLoadFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -99,7 +106,14 @@ export default function Register({ navigation }) {
           {isLoading ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={{ color: "white", textAlign: "center", fontSize: 16 }}>
+            <Text
+              style={{
+                color: "white",
+                textAlign: "center",
+                fontSize: 16,
+                fontFamily: "Poppins-Regular",
+              }}
+            >
               Daftar
             </Text>
           )}
@@ -119,6 +133,7 @@ export default function Register({ navigation }) {
                 textAlign: "center",
                 fontSize: 16,
                 fontWeight: "500",
+                fontFamily: "Poppins-Regular",
               }}
             >
               Google
@@ -137,6 +152,7 @@ export default function Register({ navigation }) {
                 textAlign: "center",
                 fontSize: 16,
                 fontWeight: "500",
+                fontFamily: "Poppins-Regular",
               }}
             >
               Facebook
@@ -163,10 +179,12 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   label: {
+    fontFamily: "Poppins-Regular",
     marginBottom: 10,
     color: "#333",
   },
   input: {
+    fontFamily: "Poppins-Regular",
     position: "relative",
     backgroundColor: "#ECECEC",
     height: 40,
@@ -188,6 +206,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   OAuthDesc: {
+    fontFamily: "Poppins-Regular",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -203,6 +222,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: "#6B6B6B",
     fontSize: 16,
+    fontFamily: "Poppins-Regular",
   },
   OAuthButton: {
     display: "flex",
