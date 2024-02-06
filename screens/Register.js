@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -10,35 +10,67 @@ import {
   Keyboard,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
 import { useLoadFonts } from "../components/Fonts";
+import client from "../utils/client";
 
 export default function Register({ navigation }) {
-  const fontsLoaded = useLoadFonts();
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      navigation.navigate("Login");
-    }, 2000);
+    const payload = {
+      username: username,
+      password: password,
+      email: email,
+      status: 1,
+    };
+
+    client
+      .post("auth/register", payload)
+      .then((response) => {
+        setIsLoading(false);
+        console.log(response);
+        if (response.status === 200) {
+          Alert.alert("Register Success!", "Account registered successfully", [
+            {
+              text: "OK",
+              onPress: () => {
+                setTimeout(() => {
+                  navigation.navigate("Login");
+                }, 1000);
+              },
+            },
+          ]);
+        }
+      })
+      .catch((error) => {
+        // console.error("Error:", error);
+        setIsLoading(false);
+        Alert.alert("An error occurred!", error.response.data.message);
+      });
   };
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  const fontsLoaded = useLoadFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  console.log("Register Username : ", username);
+  console.log("Register Email : ", email);
+  console.log("Register Password : ", password);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -48,7 +80,7 @@ export default function Register({ navigation }) {
             width: 100,
             height: 100,
             resizeMode: "cover",
-            marginBottom: 45,
+            marginBottom: 25,
           }}
           source={require("../assets/icon/logo2.png")}
         />
@@ -180,7 +212,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: "Poppins-Regular",
-    marginBottom: 10,
+    marginBottom: 5,
     color: "#333",
   },
   input: {

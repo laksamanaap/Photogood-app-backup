@@ -19,7 +19,7 @@ import AppLoading from "./components/AppLoading";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 
 export default function App() {
-  const [authenticated, setAuthenticated] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
 
   const handleAuthenticated = () => {
     setAuthenticated(true);
