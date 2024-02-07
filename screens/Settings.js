@@ -12,8 +12,13 @@ import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
-const Settings = () => {
+const Settings = ({ route }) => {
+  const navigation = useNavigation();
+  const handleLogout = route.params.handleLogout;
+
   return (
     <View style={styles.container}>
       <View style={styles.settingsCardMain}>
@@ -62,7 +67,12 @@ const Settings = () => {
             <Entypo name="chevron-right" size={18} color={"#000000"} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingsCardSecondary}>
+        <TouchableOpacity
+          style={styles.settingsCardSecondary}
+          onPress={() => {
+            handleLogout();
+          }}
+        >
           <View style={styles.settinggsCardSecondaryContainer}>
             <View style={styles.settingsCardSecondaryIcon}>
               <MaterialIcons name="logout" size={18} color={"#A9329D"} />

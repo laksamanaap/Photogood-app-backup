@@ -1,9 +1,11 @@
+import { View, Platform, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
 import Home from "../screens/Home";
 import Detail from "../screens/Detail";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
+import Entypo from "react-native-vector-icons/Entypo";
 
 const screens = {
   Register: {
@@ -32,6 +34,21 @@ const screens = {
           shadowOpacity: 0,
           borderBottomWidth: 0,
         },
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <View
+              style={{
+                marginTop: 16,
+                marginLeft: 16,
+                backgroundColor: "#A9329D",
+                borderRadius: 50,
+                padding: 4,
+              }}
+            >
+              <Entypo name="chevron-left" size={26} color="white" />
+            </View>
+          </TouchableOpacity>
+        ),
       };
     },
   },

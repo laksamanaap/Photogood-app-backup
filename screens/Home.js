@@ -25,10 +25,6 @@ export default function Home(props) {
   const [selectedCardName, setSelectedCardName] = useState(null);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
 
-  const getRandomHeight = () => {
-    return Math.floor(Math.random() * 65 + 150);
-  };
-
   const [foto, setFoto] = useState([
     { name: "foto", key: 1 },
     { name: "foto", key: 2 },

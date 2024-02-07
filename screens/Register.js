@@ -25,6 +25,11 @@ export default function Register({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
+    if (!username || !email || !password) {
+      Alert.alert("An error occurred!", "All fields must be filled!");
+      return;
+    }
+
     setIsLoading(true);
     const payload = {
       username: username,

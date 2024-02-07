@@ -1,3 +1,3 @@
 module.exports = {
-  ipAddress: "http://10.4.38.242:8000/api",
+  ipAddress: "http://10.4.35.15:8000/api",
 };

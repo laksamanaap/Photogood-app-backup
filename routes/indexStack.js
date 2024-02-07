@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -8,6 +9,7 @@ import Entypo from "react-native-vector-icons/Entypo";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { View, Platform, TouchableOpacity } from "react-native";
 import { useLoadFonts } from "../components/Fonts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Screen
 import Home from "../screens/Home";
@@ -30,7 +32,29 @@ const screenOptions = {
   },
 };
 
-const MainTabs = () => {
+const MainTabs = ({ handleLogout }) => {
+  console.log("Main Tabs Handle Logout : ", handleLogout);
+
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const getTokenFromStorage = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (token !== null) {
+          console.log("Main Tabs Token retrieved from AsyncStorage:", token);
+          setAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Error retrieving token from AsyncStorage:", error);
+        AsyncStorage.removeItem("token");
+        handleLogout();
+      }
+    };
+
+    getTokenFromStorage();
+  }, []);
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
@@ -101,7 +125,8 @@ const MainTabs = () => {
       <Tab.Screen
         name="Settings"
         component={Settings}
-        options={{
+        initialParams={{ handleLogout: () => navigation.navigate("Login") }}
+        options={({ route }) => ({
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: "center", justifyContent: "center" }}>
               <AntDesign
@@ -111,14 +136,21 @@ const MainTabs = () => {
               />
             </View>
           ),
-        }}
+          handleLogout: route.params.handleLogout,
+        })}
       />
     </Tab.Navigator>
   );
 };
 
-const App = () => {
+const App = (props) => {
   const fontsLoaded = useLoadFonts();
+  const [authenticated, setAuthenticated] = useState(false);
+
+  const handleLogout = props.screenProps.handleLogout;
+  console.log("Handle Logout Function :   ", handleLogout);
+
+  console.log("App Props", props);
 
   if (!fontsLoaded) {
     return null;
@@ -127,11 +159,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen
-          name="MainTabs"
-          component={MainTabs}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
+          {() => <MainTabs handleLogout={handleLogout} />}
+        </Stack.Screen>
         <Stack.Screen
           options={({ navigation }) => ({
             title: null,

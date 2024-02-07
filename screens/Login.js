@@ -10,12 +10,16 @@ import {
   Keyboard,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
 import { useLoadFonts } from "../components/Fonts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import client from "../utils/client";
 
 export default function Login(props) {
+  console.log(props);
   const fontsLoaded = useLoadFonts();
 
   if (!fontsLoaded) {
@@ -34,11 +38,40 @@ export default function Login(props) {
   console.log("login username : ", username);
 
   const handleLogin = () => {
+    if (!username || !password) {
+      Alert.alert("An error occurred!", "All fields must be filled!");
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      handleAuthenticated();
-    }, 2000);
+    const payload = {
+      username: username,
+      password: password,
+    };
+
+    // Perform login request
+    client
+      .post("/auth/login", payload)
+      .then(async (response) => {
+        setIsLoading(false);
+        if (response.status === 200) {
+          // Save token in AsyncStorage
+          AsyncStorage.setItem("token", response?.data.login_tokens)
+            .then(() => {
+              console.log("Token saved in AsyncStorage");
+              // Update authenticated status
+              handleAuthenticated();
+            })
+            .catch((error) => {
+              console.error("Error saving token in AsyncStorage:", error);
+              Alert.alert("An error occurred!", "Failed to save token.");
+            });
+        }
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        Alert.alert("An error occurred!", error.response.data.message);
+      });
   };
 
   const toggleShowPassword = () => {
@@ -147,9 +180,6 @@ export default function Login(props) {
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity>
-          <Text style={styles.OAuthDescBottom}>Belum punya akun? Register</Text>
-        </TouchableOpacity>
       </ScrollView>
     </TouchableWithoutFeedback>
   );
