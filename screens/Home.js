@@ -103,7 +103,7 @@ export default function Home(props) {
   const [vector, setVector] = useState([]);
   const [photo, setPhoto] = useState([]);
 
-  const [activeCategory, setActiveCategory] = useState("foto");
+  const [activeCategory, setActiveCategory] = useState("gif");
 
   const handleCategoryPress = (category) => {
     setActiveCategory(category);
@@ -134,6 +134,16 @@ export default function Home(props) {
   };
 
   // Fetch Data
+  const fetchData = async () => {
+    try {
+      await fetchGIFData();
+      await fetchPhotoData();
+      await fetchVectorData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fetchGIFData = async () => {
     try {
       const response = await client.get("/get-all-gif");
@@ -162,9 +172,11 @@ export default function Home(props) {
   };
 
   useEffect(() => {
-    fetchGIFData();
-    fetchPhotoData();
-    fetchVectorData();
+    fetchData();
+
+    const interval = setInterval(fetchData, 8000);
+
+    return () => clearInterval(interval);
   }, []);
 
   console.log("gif data from home : ", gif);

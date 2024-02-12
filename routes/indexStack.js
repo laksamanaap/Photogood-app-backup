@@ -10,6 +10,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { View, Platform, TouchableOpacity } from "react-native";
 import { useLoadFonts } from "../components/Fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 // Screen
 import Home from "../screens/Home";

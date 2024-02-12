@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Alert,
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -64,7 +65,7 @@ export default function Upload() {
 
   const handleUpload = async () => {
     if (!image) {
-      alert("Pilih foto terlebih dahulu");
+      Alert.alert("An error occured!", "Pilih foto terlebih dahulu!");
       return;
     }
 
@@ -77,11 +78,13 @@ export default function Upload() {
         name: "photo.jpg",
         type: "image/jpeg",
       });
+      // Temporary
       formData.append("judul_foto", "laksa");
       formData.append("deskripsi_foto", "melody");
       formData.append("user_id", "2");
       formData.append("kategori_id", "1");
-      formData.append("type_foto", "Photo");
+      formData.append("type_foto", "GIF");
+      formData.append("status", "1");
 
       const response = await client.post("/v1/store-guest-photo", formData, {
         headers: {
@@ -91,10 +94,23 @@ export default function Upload() {
       });
 
       console.log("Response Upload Photo:", response.data);
-      alert("Foto berhasil diunggah");
+
+      Alert.alert(
+        "Success",
+        "Foto berhasil diunggah",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Home");
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     } catch (error) {
       console.error("Error:", error);
-      alert("Terjadi kesalahan saat mengunggah foto");
+      Alert.alert("An error occured", "Terjadi kesalahan saat mengunggah foto");
     }
 
     setIsLoading(false);
