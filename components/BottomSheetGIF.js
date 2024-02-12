@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useRef } from "react";
+import React, { forwardRef, useState, useRef, useEffect } from "react";
 import {
   ScrollView,
   Text,
@@ -17,8 +17,12 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
+import client from "../utils/client";
 
-const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
+const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
+  console.log("gif id : ", id);
+
+  const [gifData, setGifData] = useState({});
   const [isLoved, setIsLoved] = useState(false);
   const [isBookmark, setIsBookmark] = useState(false);
   const [isMenuExpanded, setIsMenuExpanded] = useState(false);
@@ -85,6 +89,42 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
     setIsMenuExpanded(!isMenuExpanded);
   };
 
+  const fetchGIFData = async () => {
+    try {
+      const response = await client.get(`get-photo/${id}`);
+      setGifData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGIFData();
+  }, [id]);
+
+  const {
+    judul_foto,
+    lokasi_file,
+    created_at,
+    komentar,
+    like,
+    download,
+    user,
+    member,
+    kategori,
+  } = gifData;
+
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const formattedDate = new Date(dateString).toLocaleDateString(
+      "id-ID",
+      options
+    );
+    return formattedDate;
+  };
+
+  const placeholderImage = require("../assets/images/placeholder-image-3.png");
+
   return (
     <BottomSheet
       ref={ref}
@@ -95,11 +135,18 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
     >
       <View style={styles.contentContainer}>
         <View style={styles.imageWrapper}>
-          <Image
-            source={image}
-            style={{ width: 50, height: 50, borderRadius: 100 }}
-          />
-          <Text style={styles.textBold}>Laksamana</Text>
+          {user.foto_profile ? (
+            <Image
+              source={{ uri: user.foto_profile }}
+              style={{ width: 50, height: 50, borderRadius: 100 }}
+            />
+          ) : (
+            <Image
+              source={placeholderImage}
+              style={{ width: 50, height: 50, borderRadius: 100 }}
+            />
+          )}
+          <Text style={styles.textBold}>{user.nama_lengkap}</Text>
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -124,7 +171,10 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
       </View>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.imageContainer}>
-          <Image source={image} style={styles.bottomSheetImage} />
+          <Image
+            source={{ uri: lokasi_file }}
+            style={styles.bottomSheetImage}
+          />
           {isMenuExpanded ? (
             <>
               <View style={styles.downloadIcons}>
@@ -157,9 +207,9 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
           )}
         </View>
         <View style={styles.bottomSheetTop}>
-          <Text style={[styles.textBold, { fontSize: 24 }]}>Gadis Sampul</Text>
+          <Text style={[styles.textBold, { fontSize: 24 }]}>{judul_foto}</Text>
           <Text style={[styles.text, { color: "#7C7C7C" }]}>
-            24 Februari 2024
+            {formatDate(created_at)}
           </Text>
         </View>
         <View style={styles.commentContainer}>
@@ -198,7 +248,7 @@ const BottomSheetUI = forwardRef(({ height, id, name, image }, ref) => {
   );
 });
 
-export default BottomSheetUI;
+export default BottomSheetGIF;
 
 const styles = StyleSheet.create({
   container: {

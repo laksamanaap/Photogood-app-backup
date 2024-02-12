@@ -134,7 +134,7 @@ export default function Profile() {
               fontFamily: "Poppins-Regular",
             }}
           >
-            {isEditable ? (isSaving ? "" : "Simpan Perubahan") : "Update"}
+            {isEditable ? (isSaving ? "" : "Simpan") : "Update"}
           </Text>
           {isSaving && <ActivityIndicator size="small" color="#ffffff" />}
         </TouchableOpacity>

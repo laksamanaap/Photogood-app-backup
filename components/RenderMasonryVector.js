@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 
-const RenderMasonryList = ({ gif, openBottomSheet }) => {
+const RenderMasonryList = ({ gif, vector, openBottomSheet }) => {
   const getRandomHeight = () => {
     return Math.floor(Math.random() * 200) + 100;
   };

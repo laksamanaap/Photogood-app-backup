@@ -8,7 +8,7 @@ import {
   FlatList,
 } from "react-native";
 import React, { useState, useRef } from "react";
-import RenderMasonryList from "../components/RenderMasonryList";
+import RenderMasonryList from "../components/RenderMasonryPhoto";
 import BottomSheetUI from "../components/BottomSheetUI";
 
 export default function Bookmark({ navigation }) {
@@ -136,9 +136,9 @@ export default function Bookmark({ navigation }) {
     setActiveTab(tab);
   };
 
-  const renderContent = () => {
-    return <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />;
-  };
+  // const renderContent = () => {
+  //   return <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />;
+  // };
 
   return (
     <>
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
   },
   tabButton: {

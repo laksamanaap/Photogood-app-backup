@@ -14,29 +14,37 @@ import {
 } from "react-native";
 import Card from "../components/Card";
 import SearchPhotos from "../components/SearchPhotos";
+
 import BottomSheetUI from "../components/BottomSheetUI";
+import BottomSheetGIF from "../components/BottomSheetGIF";
+import BottomSheetPhoto from "../components/BottomSheetPhoto";
+import BottomSheetVector from "../components/BottomSheetVector";
+
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
-import RenderMasonryList from "../components/RenderMasonryList";
+import RenderMasonryPhoto from "../components/RenderMasonryPhoto";
+import RenderMasonryGif from "../components/RenderMasonryGif";
+
+import client from "../utils/client";
 
 export default function Home(props) {
   const [selectedCardID, setSelectedCardID] = useState(null);
   const [selectedCardName, setSelectedCardName] = useState(null);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
 
-  const [foto, setFoto] = useState([
-    { name: "foto", key: 1 },
-    { name: "foto", key: 2 },
-    { name: "foto", key: 3 },
-    { name: "foto", key: 4 },
-    { name: "foto", key: 5 },
-    { name: "foto", key: 6 },
-    { name: "foto", key: 7 },
-    { name: "foto", key: 8 },
-  ]);
+  const [selectedGIFID, setSelectedGIFID] = useState(null);
 
-  const [gif, setGif] = useState([
+  const [selectedPhotoID, setSelectedPhotoID] = useState(null);
+  const [selectedPhotoName, setSelectedPhotoName] = useState(null);
+  const [selectedPhotoImage, setSelectedPhotoImage] = useState(null);
+
+  const [selectedVectorID, setSelectedVectorID] = useState(null);
+  const [selectedVectorName, setSelectedVectorName] = useState(null);
+  const [selectedVectorImage, setSelectedVectorImage] = useState(null);
+
+  // State Fetch Temporary Data
+  const [gifExample, setGif] = useState([
     {
       name: "Ini Gif Satu",
       index: 1,
@@ -89,16 +97,10 @@ export default function Home(props) {
     },
   ]);
 
-  const [vector, setVector] = useState([
-    { name: "vector", key: 1 },
-    { name: "vector", key: 2 },
-    { name: "vector", key: 3 },
-    { name: "vector", key: 4 },
-    { name: "vector", key: 5 },
-    { name: "vector", key: 6 },
-    { name: "vector", key: 7 },
-    { name: "vector", key: 8 },
-  ]);
+  // State Fetch Main Data
+  const [gif, setGIF] = useState([]);
+  const [vector, setVector] = useState([]);
+  const [photo, setPhoto] = useState([]);
 
   const [activeCategory, setActiveCategory] = useState("foto");
 
@@ -107,36 +109,91 @@ export default function Home(props) {
   };
 
   const sheetRef = useRef(null);
+  const sheetRefGIF = useRef(null);
 
-  const openBottomSheet = (cardID, cardName, cardImage) => {
+  // Open Bottom Sheet
+
+  const openBottomSheetPhoto = (cardID, cardName, cardImage) => {
     setSelectedCardID(cardID);
     setSelectedCardName(cardName);
     setSelectedCardImage(cardImage);
     sheetRef.current?.open();
   };
 
+  const openBottomSheetGIF = (gifID) => {
+    setSelectedGIFID(gifID);
+    sheetRefGIF.current?.open();
+  };
+
+  const openBottomSheetVector = (cardID, cardName, cardImage) => {
+    setSelectedCardID(cardID);
+    setSelectedCardName(cardName);
+    setSelectedCardImage(cardImage);
+    sheetRef.current?.open();
+  };
+
+  // Fetch Data
+  const fetchGIFData = async () => {
+    try {
+      const response = await client.get("/get-all-gif");
+      setGIF(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchPhotoData = async () => {
+    try {
+      const response = await client.get("/get-all-photo");
+      setPhoto(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchVectorData = async () => {
+    try {
+      const response = await client.get("/get-all-vector");
+      setVector(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGIFData();
+    fetchPhotoData();
+    fetchVectorData();
+  }, []);
+
   const renderContent = () => {
     switch (activeCategory) {
       case "gif":
         return (
-          <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
+          <RenderMasonryGif gif={gif} openBottomSheetGIF={openBottomSheetGIF} />
         );
       case "foto":
         return (
           <>
-            <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
+            <RenderMasonryPhoto
+              gif={gifExample}
+              openBottomSheet={openBottomSheetPhoto}
+            />
           </>
         );
       case "vector":
         return (
-          <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
+          <RenderMasonryVector
+            gif={gifExample}
+            openBottomSheet={openBottomSheetVector}
+          />
         );
       default:
         return null;
     }
   };
 
-  console.log("Card Image : ", selectedCardImage);
+  console.log("Gif Masonry Data : ", gif);
 
   return (
     <>
@@ -218,6 +275,7 @@ export default function Home(props) {
         name={selectedCardName}
         image={selectedCardImage}
       />
+      <BottomSheetGIF ref={sheetRefGIF} height={685} id={selectedGIFID} />
     </>
   );
 }

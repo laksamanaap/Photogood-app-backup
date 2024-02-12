@@ -1,3 +1,4 @@
+// Temporary
 module.exports = {
-  ipAddress: "http://10.4.35.15:8000/api",
+  ipAddress: "http://10.4.36.24:8000/api",
 };

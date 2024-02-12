@@ -48,6 +48,17 @@ const BottomSheetCommentUI = forwardRef(({ height, id, name, image }, ref) => {
     },
   ];
 
+  const [newComment, setNewComment] = useState("");
+
+  const handleCommentChange = (text) => {
+    setNewComment(text);
+  };
+
+  const handleAddComment = () => {
+    console.log("Tambahkan komentar:", newComment);
+    setNewComment("");
+  };
+
   return (
     <BottomSheet
       ref={ref}
@@ -60,17 +71,31 @@ const BottomSheetCommentUI = forwardRef(({ height, id, name, image }, ref) => {
       </Text>
       <ScrollView>
         {dummyComments.map((comment, index) => (
-          <View style={styles.comment} key={index}>
+          <TouchableOpacity style={styles.comment} key={index}>
             <Image
               source={comment.image}
               style={{ width: 40, height: 40, borderRadius: 50 }}
             ></Image>
             <View>
-              <Text style={styles.commentAuthor}>{comment.author}</Text>
+              <View style={styles.commentWrapper}>
+                <Text style={styles.commentAuthor}>{comment.author}</Text>
+                <Text style={styles.commentHours}>1h</Text>
+              </View>
               <Text style={styles.commentText}>{comment.text}</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
+        <View style={styles.addComment}>
+          <TextInput
+            style={styles.input}
+            placeholder="Tambahkan komentar"
+            value={newComment}
+            onChangeText={handleCommentChange}
+          />
+          <TouchableOpacity onPress={handleAddComment}>
+            <Text style={styles.text}>Kirim</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </BottomSheet>
   );
@@ -80,7 +105,17 @@ export default BottomSheetCommentUI;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 72,
+  },
+  commentHours: {
+    fontFamily: "Poppins-Regular",
+    color: "#888",
+  },
+  commentWrapper: {
+    flexDirection: "row",
+    gap: 12,
   },
   commentContainer: {
     display: "flex",
@@ -103,7 +138,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 12,
     marginTop: 16,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   commentAuthor: {
     fontFamily: "Poppins-Bold",
@@ -115,6 +150,7 @@ const styles = StyleSheet.create({
   },
   addComment: {
     marginTop: 20,
+    marginBottom: 20,
     flexDirection: "row",
     alignItems: "center",
   },
