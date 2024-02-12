@@ -25,6 +25,7 @@ import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIc
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import RenderMasonryPhoto from "../components/RenderMasonryPhoto";
 import RenderMasonryGif from "../components/RenderMasonryGif";
+import RenderMasonryVector from "../components/RenderMasonryVector";
 
 import client from "../utils/client";
 

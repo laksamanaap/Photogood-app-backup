@@ -11,10 +11,12 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import DropDownPicker from "react-native-dropdown-picker";
+import client from "../utils/client";
 
 export default function Upload() {
   const navigation = useNavigation();
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -50,15 +52,55 @@ export default function Upload() {
     }
   };
 
-  const handleUpdatePress = () => {
-    if (!isSaving) {
-      setIsSaving(true);
-      setTimeout(() => {
-        setIsSaving(false);
-        navigation.navigate("Home");
-      }, 2500);
+  // const handleUpdatePress = () => {
+  //   if (!isSaving) {
+  //     setIsSaving(true);
+  //     setTimeout(() => {
+  //       setIsSaving(false);
+  //       navigation.navigate("Home");
+  //     }, 2500);
+  //   }
+  // };
+
+  const handleUpload = async () => {
+    if (!image) {
+      alert("Pilih foto terlebih dahulu");
+      return;
     }
+
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("images", {
+        uri: image,
+        name: "photo.jpg",
+        type: "image/jpeg",
+      });
+      formData.append("judul_foto", "laksa");
+      formData.append("deskripsi_foto", "melody");
+      formData.append("user_id", "2");
+      formData.append("kategori_id", "1");
+      formData.append("type_foto", "Photo");
+
+      const response = await client.post("/v1/store-guest-photo", formData, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Response Upload Photo:", response.data);
+      alert("Foto berhasil diunggah");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Terjadi kesalahan saat mengunggah foto");
+    }
+
+    setIsLoading(false);
   };
+
+  console.log("Image Value : ", image);
 
   return (
     <View style={styles.container}>
@@ -121,20 +163,15 @@ export default function Upload() {
         </View>
         <View style={{ marginTop: 25 }}>
           <TouchableOpacity
-            style={styles.button}
-            onPress={handleUpdatePress}
-            disabled={isSaving}
+            style={[
+              styles.button,
+              { backgroundColor: isLoading ? "#ccc" : "#A9329D" },
+            ]}
+            onPress={handleUpload}
+            disabled={isLoading}
           >
-            <Text
-              style={{
-                color: "white",
-                textAlign: "center",
-                fontSize: 16,
-                fontFamily: "Poppins-Regular",
-              }}
-            >
-              {isSaving ? "" : "Upload Gambar"}
-              {isSaving && <ActivityIndicator size="small" color="#ffffff" />}
+            <Text style={styles.buttonText}>
+              {isLoading ? "Mengunggah..." : "Unggah Foto"}
             </Text>
           </TouchableOpacity>
         </View>
