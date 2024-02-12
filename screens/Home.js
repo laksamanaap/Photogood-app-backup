@@ -138,7 +138,7 @@ export default function Home(props) {
       const response = await client.get("/get-all-gif");
       setGIF(response.data);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -147,7 +147,7 @@ export default function Home(props) {
       const response = await client.get("/get-all-photo");
       setPhoto(response.data);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -156,7 +156,7 @@ export default function Home(props) {
       const response = await client.get("/get-all-vector");
       setVector(response.data);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -165,6 +165,8 @@ export default function Home(props) {
     fetchPhotoData();
     fetchVectorData();
   }, []);
+
+  console.log("gif data from home : ", gif);
 
   const renderContent = () => {
     switch (activeCategory) {

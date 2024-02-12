@@ -9,6 +9,8 @@ import {
 } from "react-native";
 
 const RenderMasonryList = ({ gif, gifID, openBottomSheetGIF }) => {
+  // console.log("render gif masonry list : ", gif);
+
   const getRandomHeight = () => {
     return Math.floor(Math.random() * 200) + 100;
   };
@@ -21,6 +23,7 @@ const RenderMasonryList = ({ gif, gifID, openBottomSheetGIF }) => {
       <View style={{ flexDirection: "row", paddingBottom: 100 }}>
         <View style={{ flex: 1, flexDirection: "column" }}>
           {oddItems.map((item, index) => {
+            console.log("item from odditems : ", item);
             return (
               <TouchableOpacity
                 key={index}

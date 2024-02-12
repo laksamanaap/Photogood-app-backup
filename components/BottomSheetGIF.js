@@ -23,6 +23,8 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
   console.log("gif id : ", id);
 
   const [gifData, setGifData] = useState({});
+  const [commentData, setCommentData] = useState([]);
+
   const [isLoved, setIsLoved] = useState(false);
   const [isBookmark, setIsBookmark] = useState(false);
   const [isMenuExpanded, setIsMenuExpanded] = useState(false);
@@ -64,21 +66,6 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
     ],
   };
 
-  const dummyComments = [
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      author: "Cak Imin Slepet",
-      text: "Sangar awmu cak!.",
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-  ];
-
-  const slicedComments = dummyComments.slice(0, 2);
-
   const sheetRef = useRef(null);
 
   const openBottomSheet = () => {
@@ -106,13 +93,29 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
     judul_foto,
     lokasi_file,
     created_at,
-    komentar,
+    comment,
     like,
     download,
     user,
     member,
     kategori,
   } = gifData;
+
+  // const dummyComments = [
+  //   {
+  //     author: "Cak Imin Slepet",
+  //     text: "Sangar awmu cak!.",
+  //     image: require("../assets/images/placeholder-image-3.png"),
+  //   },
+  //   {
+  //     author: "Cak Imin Slepet",
+  //     text: "Sangar awmu cak!.",
+  //     image: require("../assets/images/placeholder-image-3.png"),
+  //   },
+  // ];
+
+  const slicedComments = comment?.slice(0, 2);
+  console.log("sliced comment : ", slicedComments);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -122,6 +125,24 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
     );
     return formattedDate;
   };
+
+  function formatTime(createdAt) {
+    const currentTime = new Date();
+    const commentTime = new Date(createdAt);
+    const timeDifference = currentTime - commentTime;
+
+    if (timeDifference > 7 * 24 * 3600 * 1000) {
+      return commentTime.toLocaleDateString();
+    } else if (timeDifference > 24 * 3600 * 1000) {
+      return Math.floor(timeDifference / (24 * 3600 * 1000)) + " h";
+    } else if (timeDifference > 3600 * 1000) {
+      return Math.floor(timeDifference / (3600 * 1000)) + " j";
+    } else if (timeDifference > 60 * 1000) {
+      return Math.floor(timeDifference / (60 * 1000)) + " m";
+    } else {
+      return "Baru saja";
+    }
+  }
 
   const placeholderImage = require("../assets/images/placeholder-image-3.png");
 
@@ -135,9 +156,9 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
     >
       <View style={styles.contentContainer}>
         <View style={styles.imageWrapper}>
-          {user.foto_profile ? (
+          {user?.foto_profil ? (
             <Image
-              source={{ uri: user.foto_profile }}
+              source={{ uri: user?.foto_profil }}
               style={{ width: 50, height: 50, borderRadius: 100 }}
             />
           ) : (
@@ -146,7 +167,9 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
               style={{ width: 50, height: 50, borderRadius: 100 }}
             />
           )}
-          <Text style={styles.textBold}>{user.nama_lengkap}</Text>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.textBold}>
+            {user?.nama_lengkap}
+          </Text>
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -207,36 +230,75 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
           )}
         </View>
         <View style={styles.bottomSheetTop}>
-          <Text style={[styles.textBold, { fontSize: 24 }]}>{judul_foto}</Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={[styles.textBold, { fontSize: 24 }]}
+          >
+            {judul_foto}
+          </Text>
           <Text style={[styles.text, { color: "#7C7C7C" }]}>
             {formatDate(created_at)}
           </Text>
         </View>
         <View style={styles.commentContainer}>
           <Text style={[styles.text, { fontSize: 16 }]}>Komentar</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => openBottomSheet()}
-          >
-            <Feather
-              name={"more-horizontal"}
-              style={{ color: "#FFF", fontSize: 18 }}
-            />
-          </TouchableOpacity>
+          {comment?.length > 3 && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => openBottomSheet()}
+            >
+              <Feather
+                name={"more-horizontal"}
+                style={{ color: "#FFF", fontSize: 18 }}
+              />
+            </TouchableOpacity>
+          )}
         </View>
         <View style={{ marginTop: 8 }}>
-          {slicedComments.map((comment, index) => (
-            <View style={styles.comment} key={index}>
-              <Image
-                source={comment.image}
-                style={{ width: 40, height: 40, borderRadius: 50 }}
-              ></Image>
-              <View>
-                <Text style={styles.commentAuthor}>{comment.author}</Text>
-                <Text style={styles.commentText}>{comment.text}</Text>
-              </View>
+          {comment?.length > 0 ? (
+            slicedComments.map((comment, index) => {
+              console.log("Photo comment : ", comment);
+              return (
+                <View style={styles.comment} key={index}>
+                  {comment.user.foto_profil ? (
+                    <Image
+                      source={{ uri: comment.user.foto_profil }}
+                      style={{ width: 40, height: 40, borderRadius: 50 }}
+                    />
+                  ) : (
+                    <Image
+                      source={placeholderImage}
+                      style={{ width: 35, height: 35, borderRadius: 100 }}
+                    />
+                  )}
+                  <View>
+                    <View style={styles.commentWrapper}>
+                      <Text style={styles.commentAuthor}>
+                        {comment?.user.nama_lengkap}
+                      </Text>
+                      <Text style={styles.commentHours}>
+                        {formatTime(comment.created_at)}
+                      </Text>
+                    </View>
+                    <Text style={styles.commentText}>
+                      {comment?.isi_komentar}
+                    </Text>
+                  </View>
+                </View>
+              );
+            })
+          ) : (
+            <View style={styles.addComment}>
+              <TextInput
+                style={styles.input}
+                placeholder="Tambahkan komentar"
+              />
+              <TouchableOpacity>
+                <Text style={styles.text}>Kirim</Text>
+              </TouchableOpacity>
             </View>
-          ))}
+          )}
         </View>
       </ScrollView>
 
@@ -285,6 +347,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     display: "flex",
+    flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -320,7 +383,7 @@ const styles = StyleSheet.create({
     height: 200,
   },
   bottomSheetTop: {
-    display: "flex",
+    flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -332,6 +395,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 25,
+  },
+  commentWrapper: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  commentHours: {
+    fontSize: 13,
+    fontFamily: "Poppins-Regular",
+    color: "#bababa",
   },
   commentHeader: {
     fontWeight: "bold",
