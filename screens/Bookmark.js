@@ -136,10 +136,6 @@ export default function Bookmark({ navigation }) {
     setActiveTab(tab);
   };
 
-  // const renderContent = () => {
-  //   return <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />;
-  // };
-
   return (
     <>
       <View style={{ padding: 20 }}>

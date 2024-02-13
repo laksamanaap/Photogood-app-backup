@@ -7,15 +7,22 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import client from "../utils/client";
 
 export default function Profile() {
   const [image, setImage] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -37,34 +44,86 @@ export default function Profile() {
     }
   };
 
-  const handleUpdatePress = () => {
-    if (isEditable) {
-      setIsSaving(true);
-      setTimeout(() => {
-        setIsSaving(false);
-        setIsEditable(false);
-      }, 2000);
-    } else {
-      setIsEditable(true);
+  // const handleUpdatePress = async () => {
+  //   if (isEditable) {
+  //     setIsSaving(true);
+  //     try {
+  //       // Store Update
+  //       await updateUserDetail();
+  //       setIsSaving(false);
+  //       setIsEditable(false);
+  //     } catch (error) {
+  //       console.error("Error updating user detail:", error);
+  //       setIsSaving(false);
+  //     }
+  //   } else {
+  //     setIsEditable(true);
+  //   }
+  // };
+
+  const getTokenFromStorage = async () => {
+    try {
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedToken !== null) {
+        setToken(storedToken);
+        console.log("token settings : ", storedToken);
+      }
+    } catch (error) {
+      console.error("Error retrieving token:", error);
     }
   };
 
-  const handleChangeText = (key, value) => {
-    setFormData({
-      ...formData,
-      [key]: value,
-    });
+  const fetchUserDetail = async () => {
+    try {
+      const response = await client.get(`v1/show-user-detail?token=${token}`);
+      console.log("settings user detail : ", response?.data);
+      setUserData(response?.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  console.log(formData);
-  console.log(image);
+  const updateUserDetail = async () => {
+    try {
+      const payload = {
+        alamat: formData.alamat || userData?.alamat,
+        email: formData.email || userData?.email,
+        username: formData.username || userData?.username,
+        nama_lengkap: formData.nama_lengkap || userData?.nama_lengkap,
+      };
+
+      const response = await client.post(
+        `v1/update-user-detail?token=${token}`,
+        payload
+      );
+
+      Alert.alert("Success", "Berhasil update user data!");
+      console.log(response, "response fetch in profile : ");
+    } catch (error) {
+      Alert.alert("An Error Occured!", error);
+      console.error(error, "error in profile : ");
+    }
+  };
+
+  useEffect(() => {
+    getTokenFromStorage();
+    fetchUserDetail();
+    // updateUserDetail();
+  }, []);
+
+  // console.log(formData);
+  // console.log(image);
+  console.log(userData, "PROFILE USER DATA : ");
+  console.log(formData, "PROFILE FORM DATA : ");
 
   return (
-    <View style={{ flex: 1, alignItems: "center", marginTop: 40 }}>
+    <View style={{ flex: 1, alignItems: "center", marginTop: 30 }}>
       <View>
-        {image ? (
+        {userData?.foto_profil ? (
           <Image
-            source={{ uri: image }}
+            source={{ uri: userData.foto_profil }}
             style={{ width: 150, height: 150, borderRadius: 100 }}
           />
         ) : (
@@ -85,47 +144,45 @@ export default function Profile() {
           <Text style={styles.label}>Username</Text>
           <TextInput
             style={[styles.input, !isEditable && styles.disabledInput]}
-            editable={isEditable ? true : false}
             placeholder="Username"
-            value={formData.username}
-            onChangeText={(text) => handleChangeText("username", text)}
+            defaultValue={userData?.username}
+            onChangeText={(value) =>
+              setFormData({ ...formData, username: value })
+            }
           />
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nama Lengkap</Text>
           <TextInput
             style={[styles.input, !isEditable && styles.disabledInput]}
-            editable={isEditable ? true : false}
             placeholder="Nama Lengkap"
-            value={formData.nama_lengkap}
-            onChangeText={(text) => handleChangeText("nama_lengkap", text)}
+            defaultValue={userData?.nama_lengkap}
+            onChangeText={(value) =>
+              setFormData({ ...formData, nama_lengkap: value })
+            }
           />
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={[styles.input, !isEditable && styles.disabledInput]}
-            editable={isEditable ? true : false}
             placeholder="Email"
-            value={formData.email}
-            onChangeText={(text) => handleChangeText("email", text)}
+            defaultValue={userData?.email}
+            onChangeText={(value) => setFormData({ ...formData, email: value })}
           />
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Alamat</Text>
           <TextInput
             style={[styles.input, !isEditable && styles.disabledInput]}
-            editable={isEditable ? true : false}
             placeholder="Alamat"
-            value={formData.alamat}
-            onChangeText={(text) => handleChangeText("alamat", text)}
+            defaultValue={userData?.alamat}
+            onChangeText={(value) =>
+              setFormData({ ...formData, alamat: value })
+            }
           />
         </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleUpdatePress}
-          disabled={isSaving}
-        >
+        <TouchableOpacity style={styles.button} onPress={updateUserDetail}>
           <Text
             style={{
               color: "white",
@@ -134,7 +191,8 @@ export default function Profile() {
               fontFamily: "Poppins-Regular",
             }}
           >
-            {isEditable ? (isSaving ? "" : "Simpan") : "Update"}
+            {/* {isEditable ? (isSaving ? "" : "Simpan Profile") : "Edit Profile"} */}
+            Edit Profile
           </Text>
           {isSaving && <ActivityIndicator size="small" color="#ffffff" />}
         </TouchableOpacity>
@@ -182,6 +240,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   disabledInput: {
-    backgroundColor: "#d3d3d3",
+    backgroundColor: "#dedede",
   },
 });

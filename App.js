@@ -17,6 +17,7 @@ import ClientNavigator from "./routes/indexStack";
 import { useFonts } from "expo-font";
 import AppLoading from "./components/AppLoading";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(true);
@@ -27,6 +28,7 @@ export default function App() {
 
   const handleLogout = () => {
     setAuthenticated(false);
+    AsyncStorage.removeItem("token");
   };
 
   return (

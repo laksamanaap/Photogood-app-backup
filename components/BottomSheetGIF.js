@@ -168,7 +168,7 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
             />
           )}
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.textBold}>
-            {user?.nama_lengkap}
+            {user?.username}
           </Text>
         </View>
         <View style={styles.buttonContainer}>
