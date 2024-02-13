@@ -10,6 +10,7 @@ import {
   Animated,
   Platform,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import BottomSheetCommentUI from "./BottomSheetCommentUI";
 import BottomSheet from "@devvie/bottom-sheet";
@@ -28,6 +29,8 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
   const [isLoved, setIsLoved] = useState(false);
   const [isBookmark, setIsBookmark] = useState(false);
   const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const loveAnimation = useRef(new Animated.Value(0)).current;
 
   const toggleLove = () => {
@@ -77,9 +80,11 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
   };
 
   const fetchGIFData = async () => {
+    setLoading(true);
     try {
       const response = await client.get(`get-photo/${id}`);
       setGifData(response.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -100,19 +105,6 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
     member,
     kategori,
   } = gifData;
-
-  // const dummyComments = [
-  //   {
-  //     author: "Cak Imin Slepet",
-  //     text: "Sangar awmu cak!.",
-  //     image: require("../assets/images/placeholder-image-3.png"),
-  //   },
-  //   {
-  //     author: "Cak Imin Slepet",
-  //     text: "Sangar awmu cak!.",
-  //     image: require("../assets/images/placeholder-image-3.png"),
-  //   },
-  // ];
 
   const slicedComments = comment?.slice(0, 2);
   console.log("sliced comment : ", slicedComments);
@@ -145,6 +137,14 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
   }
 
   const placeholderImage = require("../assets/images/placeholder-image-3.png");
+
+  // if (loading) {
+  //   return (
+  //     <View style={styles.loadingContainer}>
+  //       <ActivityIndicator size="large" color="#A9329D" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <BottomSheet
@@ -316,6 +316,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   loveIcon: {
     position: "absolute",
     alignSelf: "center",
@@ -398,6 +403,7 @@ const styles = StyleSheet.create({
   },
   commentWrapper: {
     flexDirection: "row",
+    alignItems: "flex-start",
     gap: 12,
   },
   commentHours: {

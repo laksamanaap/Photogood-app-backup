@@ -7,10 +7,7 @@ import {
   StyleSheet,
   Image,
   TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-  Button,
-  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import Card from "../components/Card";
 import SearchPhotos from "../components/SearchPhotos";
@@ -34,15 +31,13 @@ export default function Home(props) {
   const [selectedCardName, setSelectedCardName] = useState(null);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+
   const [selectedGIFID, setSelectedGIFID] = useState(null);
 
   const [selectedPhotoID, setSelectedPhotoID] = useState(null);
-  const [selectedPhotoName, setSelectedPhotoName] = useState(null);
-  const [selectedPhotoImage, setSelectedPhotoImage] = useState(null);
 
   const [selectedVectorID, setSelectedVectorID] = useState(null);
-  const [selectedVectorName, setSelectedVectorName] = useState(null);
-  const [selectedVectorImage, setSelectedVectorImage] = useState(null);
 
   // State Fetch Temporary Data
   const [gifExample, setGif] = useState([
@@ -113,7 +108,6 @@ export default function Home(props) {
   const sheetRefGIF = useRef(null);
 
   // Open Bottom Sheet
-
   const openBottomSheetPhoto = (cardID, cardName, cardImage) => {
     setSelectedCardID(cardID);
     setSelectedCardName(cardName);
@@ -208,7 +202,15 @@ export default function Home(props) {
     }
   };
 
-  console.log("Gif Masonry Data : ", gif);
+  // console.log("Gif Masonry Data : ", gif);
+
+  // if (loading) {
+  //   return (
+  //     <View style={styles.loadingContainer}>
+  //       <ActivityIndicator size="large" color="#A9329D" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <>
@@ -296,6 +298,11 @@ export default function Home(props) {
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   bottomSheetContent: {
     padding: 20,
     backgroundColor: "white",

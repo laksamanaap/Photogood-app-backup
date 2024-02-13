@@ -36,25 +36,23 @@ const screenOptions = {
 const MainTabs = ({ handleLogout }) => {
   console.log("Main Tabs Handle Logout : ", handleLogout);
 
-  const [authenticated, setAuthenticated] = useState(false);
+  // useEffect(() => {
+  //   const getTokenFromStorage = async () => {
+  //     try {
+  //       const token = await AsyncStorage.getItem("token");
+  //       if (token !== null) {
+  //         console.log("Main Tabs Token retrieved from AsyncStorage:", token);
+  //         setAuthenticated(true);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error retrieving token from AsyncStorage:", error);
+  //       AsyncStorage.removeItem("token");
+  //       handleLogout();
+  //     }
+  //   };
 
-  useEffect(() => {
-    const getTokenFromStorage = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        if (token !== null) {
-          console.log("Main Tabs Token retrieved from AsyncStorage:", token);
-          setAuthenticated(true);
-        }
-      } catch (error) {
-        console.error("Error retrieving token from AsyncStorage:", error);
-        AsyncStorage.removeItem("token");
-        handleLogout();
-      }
-    };
-
-    getTokenFromStorage();
-  }, []);
+  //   getTokenFromStorage();
+  // }, []);
 
   return (
     <Tab.Navigator screenOptions={screenOptions}>
@@ -126,7 +124,7 @@ const MainTabs = ({ handleLogout }) => {
       <Tab.Screen
         name="Settings"
         component={Settings}
-        initialParams={{ handleLogout: () => navigation.navigate("Login") }}
+        initialParams={{ handleLogout: handleLogout }}
         options={({ route }) => ({
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -148,10 +146,9 @@ const App = (props) => {
   const fontsLoaded = useLoadFonts();
   const [authenticated, setAuthenticated] = useState(false);
 
+  // console.log(props, "Handle Logout From APP JS");
   const handleLogout = props.screenProps.handleLogout;
-  console.log("Handle Logout Function :   ", handleLogout);
-
-  console.log("App Props", props);
+  console.log(handleLogout, "Handle Logout From APP JS");
 
   if (!fontsLoaded) {
     return null;
