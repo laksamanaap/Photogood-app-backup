@@ -16,7 +16,7 @@ export default function Membership() {
     >
       <LinearGradient
         colors={["rgba(0,0,0,0.9)", "transparent"]}
-        start={{ x: 1, y: 1.4 }}
+        start={{ x: 1, y: 1.3 }}
         end={{ x: 1, y: 0 }}
         style={styles.linearGradient}
       />
@@ -33,6 +33,12 @@ export default function Membership() {
         <TouchableOpacity style={styles.membershipButton}>
           <Text style={styles.buttonText}>Upgrade Membership</Text>
         </TouchableOpacity>
+        <View style={styles.policyContainer}>
+          <Text style={styles.policyText}>
+            Dengan menekan tombol "Upgrade Membership", Anda menyetujui semua
+            ketentuan dan kebijakan yang terkait dengan keanggotaan kami.
+          </Text>
+        </View>
       </View>
     </ImageBackground>
   );
@@ -50,14 +56,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
+  policyContainer: {
+    marginTop: 20,
+  },
+  policyText: {
+    color: "#FFFFFF",
+    fontFamily: "Poppins-Regular",
+    fontSize: 14,
+    textAlign: "center",
+  },
   heading: {
     fontSize: 48,
     color: "#FFFFFF",
     marginBottom: 20,
     fontFamily: "Poppins-Bold",
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
   membershipInfo: {
     marginBottom: 30,
