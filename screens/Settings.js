@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -30,6 +31,7 @@ const Settings = (props) => {
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getTokenFromStorage = async () => {
     try {
@@ -60,6 +62,17 @@ const Settings = (props) => {
     fetchUserDetail();
   }, []);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchUserDetail();
+    } catch (error) {
+      console.error("Error refreshing user detail:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -71,7 +84,12 @@ const Settings = (props) => {
   console.log(userData, "USER DATA : ");
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.settingsCardMain}>
         <View>
           <Text style={styles.settingsTextBold}>
@@ -95,7 +113,7 @@ const Settings = (props) => {
           />
         )}
       </View>
-      <ScrollView>
+      <View>
         <TouchableOpacity
           style={styles.settingsCardSecondary}
           onPress={() => navigation.navigate("Profile")}
@@ -166,8 +184,8 @@ const Settings = (props) => {
             <Entypo name="chevron-right" size={18} color={"#000000"} />
           </View>
         </TouchableOpacity>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 

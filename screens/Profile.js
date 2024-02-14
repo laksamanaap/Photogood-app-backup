@@ -8,6 +8,8 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  AppState,
+  RefreshControl,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -23,6 +25,7 @@ export default function Profile() {
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -43,23 +46,6 @@ export default function Profile() {
       setImage(result.assets[0].uri);
     }
   };
-
-  // const handleUpdatePress = async () => {
-  //   if (isEditable) {
-  //     setIsSaving(true);
-  //     try {
-  //       // Store Update
-  //       await updateUserDetail();
-  //       setIsSaving(false);
-  //       setIsEditable(false);
-  //     } catch (error) {
-  //       console.error("Error updating user detail:", error);
-  //       setIsSaving(false);
-  //     }
-  //   } else {
-  //     setIsEditable(true);
-  //   }
-  // };
 
   const getTokenFromStorage = async () => {
     try {
@@ -85,6 +71,17 @@ export default function Profile() {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchUserDetail();
+    } catch (error) {
+      console.error("Error refreshing user detail:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const updateUserDetail = async () => {
     try {
       const payload = {
@@ -99,7 +96,32 @@ export default function Profile() {
         payload
       );
 
+      // Store foto_profil (if there is an image)
+      if (image) {
+        const imageData = new FormData();
+        imageData.append("images", {
+          uri: image,
+          name: "photo.jpg",
+          type: "image/jpeg",
+        });
+
+        const responsePhoto = await client.post(
+          `/v1/store-user-photo?token=${token}`,
+          imageData,
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        console.log(responsePhoto, "responsePhoto fetch in profile : ");
+        onRefresh();
+      }
+
       Alert.alert("Success", "Berhasil update user data!");
+      onRefresh();
       console.log(response, "response fetch in profile : ");
     } catch (error) {
       Alert.alert("An Error Occured!", error);
@@ -114,23 +136,52 @@ export default function Profile() {
   }, []);
 
   // console.log(formData);
-  // console.log(image);
+  console.log(image, "IMAGE PROFILE ");
   console.log(userData, "PROFILE USER DATA : ");
   console.log(formData, "PROFILE FORM DATA : ");
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#A9329D" />
+      </View>
+    );
+  }
+
   return (
-    <View style={{ flex: 1, alignItems: "center", marginTop: 30 }}>
+    <ScrollView
+      contentContainerStyle={{ flex: 1, alignItems: "center" }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View>
-        {userData?.foto_profil ? (
+        {image ? (
+          <Image
+            source={{ uri: image }}
+            style={{
+              width: 150,
+              height: 150,
+              borderRadius: 100,
+              marginBottom: 15,
+            }}
+          />
+        ) : userData?.foto_profil ? (
           <Image
             source={{ uri: userData.foto_profil }}
-            style={{ width: 150, height: 150, borderRadius: 100 }}
+            style={{
+              width: 150,
+              height: 150,
+              borderRadius: 100,
+              marginBottom: 15,
+            }}
           />
         ) : (
-          <Image
-            source={require("../assets/images/placeholder-image-3.png")}
-            style={{ width: 150, height: 150, borderRadius: 100 }}
-          />
+          <View style={styles.imagePreview}>
+            <Text style={{ fontFamily: "Poppins-Regular" }}>
+              No image selected
+            </Text>
+          </View>
         )}
         <TouchableOpacity
           onPress={() => pickImage()}
@@ -182,7 +233,10 @@ export default function Profile() {
             }
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={updateUserDetail}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => updateUserDetail()}
+        >
           <Text
             style={{
               color: "white",
@@ -191,13 +245,12 @@ export default function Profile() {
               fontFamily: "Poppins-Regular",
             }}
           >
-            {/* {isEditable ? (isSaving ? "" : "Simpan Profile") : "Edit Profile"} */}
             Edit Profile
           </Text>
           {isSaving && <ActivityIndicator size="small" color="#ffffff" />}
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -209,6 +262,29 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 8,
     borderRadius: 24,
+  },
+  imagePreview: {
+    width: 150,
+    height: 150,
+    borderWidth: 2,
+    borderRadius: 100,
+    padding: 10,
+    borderStyle: "dashed",
+    borderColor: "#888",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 5,
+  },
+  previewImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 100,
+    resizeMode: "cover",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   inputContainer: {
     width: "100%",

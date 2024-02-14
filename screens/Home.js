@@ -168,9 +168,9 @@ export default function Home(props) {
   useEffect(() => {
     fetchData();
 
-    // const interval = setInterval(fetchData, 8000);
+    const interval = setInterval(fetchData, 8000);
 
-    // return () => clearInterval(interval);
+    return () => clearInterval(interval);
   }, []);
 
   console.log("gif data from home : ", gif);
