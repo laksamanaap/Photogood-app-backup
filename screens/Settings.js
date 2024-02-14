@@ -152,7 +152,7 @@ const Settings = (props) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.settingsCardSecondary}
-          onPress={() => navigation.navigate("Profile")}
+          onPress={() => navigation.navigate("Membership")}
         >
           <View style={styles.settinggsCardSecondaryContainer}>
             <View style={styles.settingsCardSecondaryIcon}>
