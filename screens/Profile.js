@@ -83,6 +83,17 @@ export default function Profile() {
   };
 
   const updateUserDetail = async () => {
+    if (!formData.alamat && !formData.nama_lengkap) {
+      Alert.alert("An error occurred!", "Nama lengkap dan alamat harus diisi!");
+      return;
+    } else if (!formData.alamat) {
+      Alert.alert("An error occurred!", "Alamat harus diisi!");
+      return;
+    } else if (!formData.nama_lengkap) {
+      Alert.alert("An error occurred!", "Nama lengkap harus diisi!");
+      return;
+    }
+
     try {
       const payload = {
         alamat: formData.alamat || userData?.alamat,
