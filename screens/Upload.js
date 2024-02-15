@@ -86,14 +86,14 @@ export default function Upload() {
       formData.append("type_foto", "GIF");
       formData.append("status", "1");
 
-      const response = await client.post("/v1/store-guest-photo", formData, {
+      const responseGuest = await client.post("/v1/store-guest-photo", formData, {
         headers: {
           Accept: "application/json",
           "Content-Type": "multipart/form-data",
         },
       });
 
-      console.log("Response Upload Photo:", response.data);
+      console.log("ResponseGuest Upload Photo:", responseGuest.data);
 
       Alert.alert(
         "Success",
@@ -109,8 +109,8 @@ export default function Upload() {
         { cancelable: false }
       );
     } catch (error) {
-      console.error("Error:", error);
-      Alert.alert("An error occured", "Terjadi kesalahan saat mengunggah foto");
+      // console.error("Error:", error);
+      Alert.alert("An error occured", error?.response.data.message);
     }
 
     setIsLoading(false);

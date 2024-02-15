@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     minWidth: 36,
   },
   settingsTextBold: {
-    fontFamily: "Poppins-Bold",
+    fontFamily: "Poppins-Bold"
   },
   settingsTextSmall: {
     fontFamily: "Poppins-Regular",
