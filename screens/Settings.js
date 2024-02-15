@@ -7,14 +7,16 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  Animated,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
 import Octicons from "react-native-vector-icons/Octicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Foundation from "react-native-vector-icons/Foundation";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import client from "../utils/client";
@@ -30,8 +32,12 @@ const Settings = (props) => {
 
   const [token, setToken] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [userStatus, setUserStatus] = useState("1");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [isShining, setIsShining] = useState(false);
+  const shiningAnimation = useRef(new Animated.Value(0)).current;
 
   const getTokenFromStorage = async () => {
     try {
@@ -50,6 +56,7 @@ const Settings = (props) => {
       const response = await client.get(`v1/show-user-detail?token=${token}`);
       console.log("settings user detail : ", response?.data);
       setUserData(response?.data);
+      setUserStatus(response?.data.status);
     } catch (error) {
       console.error(error);
     } finally {
@@ -61,6 +68,30 @@ const Settings = (props) => {
     getTokenFromStorage();
     fetchUserDetail();
   }, []);
+
+  useEffect(() => {
+    const shiningInterval = setInterval(() => {
+      setIsShining((prevIsShining) => !prevIsShining);
+    }, 1000);
+
+    return () => clearInterval(shiningInterval);
+  }, []);
+
+  useEffect(() => {
+    if (isShining) {
+      Animated.timing(shiningAnimation, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(shiningAnimation, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isShining]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -82,6 +113,7 @@ const Settings = (props) => {
   }
 
   console.log(userData, "USER DATA : ");
+  console.log(userStatus, "USER STATUS : ");
 
   return (
     <ScrollView
@@ -97,21 +129,39 @@ const Settings = (props) => {
           </Text>
           <Text style={styles.settingsTextSmall}>{userData?.email}</Text>
         </View>
-        {userData?.foto_profil ? (
-          <Image
-            source={{
-              uri:
-                userData?.foto_profil ||
-                "../assets/images/placeholder-image-3.png",
-            }}
-            style={{ width: 40, height: 40, borderRadius: 100 }}
-          />
-        ) : (
-          <Image
-            source={require("../assets/images/placeholder-image-3.png")}
-            style={{ width: 40, height: 40, borderRadius: 100 }}
-          />
-        )}
+        <View style={styles.userAvatarContainer}>
+          {userData?.foto_profil ? (
+            <Image
+              source={{ uri: userData?.foto_profil }}
+              style={styles.userAvatar}
+            />
+          ) : (
+            <Image
+              source={require("../assets/images/placeholder-image-3.png")}
+              style={styles.userAvatar}
+            />
+          )}
+          {userStatus === "2" && (
+            <Animated.View
+              style={[
+                styles.crownWrapper,
+                {
+                  opacity: shiningAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.2, 1],
+                  }),
+                },
+              ]}
+            >
+              <Foundation
+                name="crown"
+                size={16}
+                color={"#FFBB48"}
+                style={styles.crownIcon}
+              />
+            </Animated.View>
+          )}
+        </View>
       </View>
       <View>
         <TouchableOpacity
@@ -196,6 +246,37 @@ const styles = StyleSheet.create({
     marginTop: 40,
     padding: 20,
   },
+  userAvatarContainer: {
+    position: "relative",
+  },
+  userAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  crownWrapper: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    transform: [{ translateX: 4 }, { translateY: -30 }],
+    flexDirection: "row",
+    justifyContent: "center",
+    backgroundColor: "white",
+    padding: 4,
+    minWidth: 24,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    elevation: 10,
+  },
+  crownIcon: {
+    opacity: 0.5,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -239,7 +320,7 @@ const styles = StyleSheet.create({
     minWidth: 36,
   },
   settingsTextBold: {
-    fontFamily: "Poppins-Bold"
+    fontFamily: "Poppins-Bold",
   },
   settingsTextSmall: {
     fontFamily: "Poppins-Regular",

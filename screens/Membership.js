@@ -67,7 +67,7 @@ export default function Membership() {
           <View style={styles.membershipCardBadge}>
             <View style={styles.membershipCardContent}>
               <Text style={[styles.policyText, { fontFamily: "Poppins-Bold" }]}>
-                1 Month VIP
+                1 Bulan VIP
               </Text>
               <Text
                 style={[
@@ -77,7 +77,7 @@ export default function Membership() {
                   },
                 ]}
               >
-                Subscription
+                Membership
               </Text>
             </View>
             <View style={styles.membershipCardContent}>
