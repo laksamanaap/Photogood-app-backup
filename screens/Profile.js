@@ -83,7 +83,15 @@ export default function Profile() {
   };
 
   const updateUserDetail = async () => {
-    if (!formData.alamat && !formData.nama_lengkap) {
+    if (!formData.alamat && userData?.alamat) {
+      formData.alamat = userData.alamat;
+    }
+
+    if (!formData.nama_lengkap && userData?.nama_lengkap) {
+      formData.nama_lengkap = userData.nama_lengkap;
+    }
+
+    if (!formData.nama_lengkap && !formData.alamat) {
       Alert.alert("An error occurred!", "Nama lengkap dan alamat harus diisi!");
       return;
     } else if (!formData.alamat) {
