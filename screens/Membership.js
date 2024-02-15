@@ -117,7 +117,15 @@ export default function Membership() {
           <Text style={styles.buttonText}>Upgrade Membership</Text>
         </TouchableOpacity>
         <View style={styles.policyContainer}>
-          <Text style={[styles.policyText, { fontSize: 14 }]}>
+          <Text
+            style={[
+              styles.policyText,
+              {
+                fontSize: 14,
+                color: "rgba(230, 230, 230, 0.8)",
+              },
+            ]}
+          >
             Dengan menekan tombol "Upgrade Membership", Anda menyetujui semua
             ketentuan dan kebijakan yang terkait dengan keanggotaan kami. Mari
             bergabung bersama Photogood dan ciptakan komunitas pencinta
@@ -147,7 +155,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
     borderRightWidth: 0,
-    backgroundColor: "rgba(175, 145, 24, 0.9)",
+    backgroundColor: "rgba(211, 172, 18, 0.9)",
   },
   membershipCardContainer: {
     flexDirection: "row",
@@ -240,6 +248,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     elevation: 3,
     marginBottom: 8,
+    width: "80%",
   },
   buttonText: {
     color: "#FFFFFF",
