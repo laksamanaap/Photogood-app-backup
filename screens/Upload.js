@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,10 +8,14 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  RefreshControl,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import DropDownPicker from "react-native-dropdown-picker";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import client from "../utils/client";
 
 export default function Upload() {
@@ -21,10 +25,48 @@ export default function Upload() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [items, setItems] = useState([
     { label: "Hewan", value: "Hewan" },
     { label: "Tumbuhan", value: "Banana" },
   ]);
+
+  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [userStatus, setUserStatus] = useState("1");
+  const [memberId, setMemberId] = useState(null);
+
+  const getTokenFromStorage = async () => {
+    try {
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedToken !== null) {
+        setToken(storedToken);
+        console.log("token settings : ", storedToken);
+      }
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+    }
+  };
+
+  const fetchUserDetail = async () => {
+    try {
+      const response = await client.get(`v1/show-user-detail?token=${token}`);
+      console.log("upload user detail : ", response?.data);
+      setUserData(response?.data);
+      setUserStatus(response?.data.status);
+      setMemberId(response?.data?.member?.member_id);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getTokenFromStorage();
+    fetchUserDetail();
+  }, []);
 
   const pickImage = async (sourceType) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -53,17 +95,11 @@ export default function Upload() {
     }
   };
 
-  // const handleUpdatePress = () => {
-  //   if (!isSaving) {
-  //     setIsSaving(true);
-  //     setTimeout(() => {
-  //       setIsSaving(false);
-  //       navigation.navigate("Home");
-  //     }, 2500);
-  //   }
-  // };
-
+  // Guest
   const handleUpload = async () => {
+    console.log(
+      "==================== guest upload ============================"
+    );
     if (!image) {
       Alert.alert("An error occured!", "Pilih foto terlebih dahulu!");
       return;
@@ -81,17 +117,21 @@ export default function Upload() {
       // Temporary
       formData.append("judul_foto", "laksa");
       formData.append("deskripsi_foto", "melody");
-      formData.append("user_id", "2");
+      formData.append("user_id", "1");
       formData.append("kategori_id", "1");
       formData.append("type_foto", "GIF");
       formData.append("status", "1");
 
-      const responseGuest = await client.post("/v1/store-guest-photo", formData, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const responseGuest = await client.post(
+        "/v1/store-guest-photo",
+        formData,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       console.log("ResponseGuest Upload Photo:", responseGuest.data);
 
@@ -116,10 +156,100 @@ export default function Upload() {
     setIsLoading(false);
   };
 
+  // Member
+  const handleMemberUpload = async () => {
+    console.log(
+      "==================== member upload ============================"
+    );
+
+    if (!image) {
+      Alert.alert("An error occured!", "Pilih foto terlebih dahulu!");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("images", {
+        uri: image,
+        name: "photo.jpg",
+        type: "image/jpeg",
+      });
+      // Temporary
+      formData.append("judul_foto", "laksa");
+      formData.append("deskripsi_foto", "melody");
+      formData.append("user_id", userData?.user_id);
+      formData.append("member_id", memberId);
+      formData.append("kategori_id", "1");
+      formData.append("type_foto", "GIF");
+      formData.append("status", "1");
+
+      const responseMember = await client.post(
+        "/v2/store-member-photo",
+        formData,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("responseMember Upload Photo:", responseMember.data);
+
+      Alert.alert(
+        "Success",
+        "Foto berhasil diunggah",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Home");
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert("An error occured", error?.response.data.message);
+    }
+
+    setIsLoading(false);
+  };
+
+  const onRefresh = async () => {
+    console.log("============= REFRESHING UPLOAD ===============");
+    setRefreshing(true);
+    try {
+      await fetchUserDetail();
+    } catch (error) {
+      console.error("Error refreshing user detail:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   console.log("Image Value : ", image);
+  console.log("userData upload : ", userData);
+  console.log("member id upload : ", memberId);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#A9329D" />
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.imagePreview}>
         {image && <Image source={{ uri: image }} style={styles.previewImage} />}
         {!image && (
@@ -183,7 +313,7 @@ export default function Upload() {
               styles.button,
               { backgroundColor: isLoading ? "#ccc" : "#A9329D" },
             ]}
-            onPress={handleUpload}
+            onPress={userStatus === "2" ? handleMemberUpload : handleUpload}
             disabled={isLoading}
           >
             <Text style={styles.buttonText}>
@@ -192,7 +322,7 @@ export default function Upload() {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -202,6 +332,11 @@ const styles = StyleSheet.create({
     padding: 35,
     alignItems: "center",
     justifyContent: "center",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonContainer: {
     display: "flex",

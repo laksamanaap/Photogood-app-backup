@@ -18,6 +18,8 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
+import Foundation from "react-native-vector-icons/Foundation";
+
 import client from "../utils/client";
 
 const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
@@ -32,6 +34,32 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
   const [loading, setLoading] = useState(true);
 
   const loveAnimation = useRef(new Animated.Value(0)).current;
+  const [isShining, setIsShining] = useState(false);
+  const shiningAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const shiningInterval = setInterval(() => {
+      setIsShining((prevIsShining) => !prevIsShining);
+    }, 1000);
+
+    return () => clearInterval(shiningInterval);
+  }, []);
+
+  useEffect(() => {
+    if (isShining) {
+      Animated.timing(shiningAnimation, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(shiningAnimation, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isShining]);
 
   const toggleLove = () => {
     setIsLoved(!isLoved);
@@ -146,6 +174,8 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
   //   );
   // }
 
+  console.log("======= GIF DETAIL DATA : ===========", gifData);
+
   return (
     <BottomSheet
       ref={ref}
@@ -156,7 +186,7 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
     >
       <View style={styles.contentContainer}>
         <View style={styles.imageWrapper}>
-          {user?.foto_profil ? (
+          {/* {user?.foto_profil ? (
             <Image
               source={{ uri: user?.foto_profil }}
               style={{ width: 50, height: 50, borderRadius: 100 }}
@@ -166,7 +196,40 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
               source={placeholderImage}
               style={{ width: 50, height: 50, borderRadius: 100 }}
             />
-          )}
+          )} */}
+          <View style={styles.userAvatarContainer}>
+            {gifData.user?.foto_profil ? (
+              <Image
+                source={{ uri: gifData.user?.foto_profil }}
+                style={styles.userAvatar}
+              />
+            ) : (
+              <Image
+                source={require("../assets/images/placeholder-image-3.png")}
+                style={styles.userAvatar}
+              />
+            )}
+            {gifData?.user?.status === "2" && (
+              <Animated.View
+                style={[
+                  styles.crownWrapper,
+                  {
+                    opacity: shiningAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.2, 1],
+                    }),
+                  },
+                ]}
+              >
+                <Foundation
+                  name="crown"
+                  size={16}
+                  color={"#FFBB48"}
+                  style={styles.crownIcon}
+                />
+              </Animated.View>
+            )}
+          </View>
           <Text numberOfLines={1} ellipsizeMode="tail" style={styles.textBold}>
             {user?.username}
           </Text>
@@ -315,6 +378,37 @@ export default BottomSheetGIF;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+  },
+  userAvatarContainer: {
+    position: "relative",
+  },
+  userAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  crownWrapper: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    transform: [{ translateX: 4 }, { translateY: -30 }],
+    flexDirection: "row",
+    justifyContent: "center",
+    backgroundColor: "white",
+    padding: 4,
+    minWidth: 24,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    elevation: 10,
+  },
+  crownIcon: {
+    opacity: 0.5,
   },
   loadingContainer: {
     flex: 1,

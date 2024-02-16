@@ -5,12 +5,23 @@ import {
   View,
   ImageBackground,
   TouchableOpacity,
+  Alert,
+  Linking,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import client from "../utils/client";
+
 export default function Membership() {
   const [countdown, setCountdown] = useState("24:00:00");
+  const [loading, setLoading] = useState(null);
+  const [redirect, setRedirecting] = useState(null);
+
+  const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -40,6 +51,98 @@ export default function Membership() {
     return () => clearInterval(timer);
   }, []);
 
+  const getTokenFromStorage = async () => {
+    try {
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedToken !== null) {
+        setToken(storedToken);
+        console.log("token settings : ", storedToken);
+      }
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+    }
+  };
+
+  const fetchUserDetail = async () => {
+    try {
+      const response = await client.get(`v1/show-user-detail?token=${token}`);
+      console.log("settings user detail : ", response?.data);
+      setUserData(response?.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchUserDetail();
+    } catch (error) {
+      console.error("Error refreshing user detail:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    getTokenFromStorage();
+    fetchUserDetail();
+    // updateUserDetail();
+  }, []);
+
+  const storeMembership = async () => {
+    setLoading(true);
+
+    try {
+      const payload = {
+        price: 30000,
+        item_name: "Membership",
+        user_id: userData?.user_id,
+      };
+
+      const auth = "SB-Mid-server-jYmiUqM4L6NjnHaJncPQmekt";
+      console.log(auth, "============ AUTH ENV MIDTRANS ===============");
+
+      const response = await client.post(
+        "/v1/store-midtrans-payment",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${auth}`,
+          },
+        }
+      );
+
+      console.log(
+        response,
+        "================ RESPONSE MEMBERSHIP ====================="
+      );
+
+      if (
+        response?.data.payment_info &&
+        response?.data.payment_info.redirect_url
+      ) {
+        const redirectUrl = response?.data.payment_info.redirect_url;
+        Linking.openURL(redirectUrl);
+      } else {
+        Alert.alert("Payment Error", "Failed to get redirect URL");
+      }
+    } catch (error) {
+      // console.error(error);
+      Alert.alert(
+        "An error occurred!",
+        `${error?.response?.data?.message || "Unknown error"}`
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // console.log(userData, "USER DATA MEMBERSHIP");
+
   return (
     <ImageBackground
       source={require("../assets/images/gallery-sample-image.png")}
@@ -47,7 +150,7 @@ export default function Membership() {
     >
       <LinearGradient
         colors={["rgba(23, 5, 38,0.9)", "transparent"]}
-        start={{ x: 1, y: 1 }}
+        start={{ x: 1, y: 0.9 }}
         end={{ x: 1, y: 0 }}
         style={styles.linearGradient}
       />
@@ -114,8 +217,17 @@ export default function Membership() {
             <Text style={[styles.policyText, { fontSize: 14 }]}>OFF</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.membershipButton}>
-          <Text style={styles.buttonText}>Upgrade Membership</Text>
+        <TouchableOpacity
+          style={styles.membershipButton}
+          onPress={() => storeMembership()}
+        >
+          <Text style={styles.buttonText}>
+            {loading
+              ? "Waiting Midtrans......"
+              : redirect
+              ? "Redirecting......"
+              : "Upgrade Membership"}
+          </Text>
         </TouchableOpacity>
         <View style={styles.policyContainer}>
           <Text
