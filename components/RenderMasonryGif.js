@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FlatList,
   TouchableOpacity,
@@ -6,10 +6,22 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 
-const RenderMasonryList = ({ gif, gifID, openBottomSheetGIF }) => {
-  // console.log("render gif masonry list : ", gif);
+const RenderMasonryList = ({ gif, gifID, openBottomSheetGIF, fetchData }) => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchData();
+    } catch (error) {
+      console.error("Error refreshing user detail:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const getRandomHeight = () => {
     return Math.floor(Math.random() * 200) + 100;
@@ -19,7 +31,11 @@ const RenderMasonryList = ({ gif, gifID, openBottomSheetGIF }) => {
   const evenItems = gif.filter((_, index) => index % 2 === 0);
 
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={{ flexDirection: "row", paddingBottom: 100 }}>
         <View style={{ flex: 1, flexDirection: "column" }}>
           {oddItems.map((item, index) => {

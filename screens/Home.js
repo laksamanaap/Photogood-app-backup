@@ -8,6 +8,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import Card from "../components/Card";
 import SearchPhotos from "../components/SearchPhotos";
@@ -27,6 +28,8 @@ import RenderMasonryVector from "../components/RenderMasonryVector";
 import client from "../utils/client";
 
 export default function Home(props) {
+  const [searchResults, setSearchResults] = useState([]);
+
   const [selectedCardID, setSelectedCardID] = useState(null);
   const [selectedCardName, setSelectedCardName] = useState(null);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
@@ -127,6 +130,12 @@ export default function Home(props) {
     sheetRef.current?.open();
   };
 
+  const handleSearchResults = (results) => {
+    // setSearchResults(results);
+    console.log(results, "========= RESULTS IN FUNCTION ===============");
+    setGIF(results);
+  };
+
   // Fetch Data
   const fetchData = async () => {
     try {
@@ -167,19 +176,23 @@ export default function Home(props) {
 
   useEffect(() => {
     fetchData();
+    // const interval = setInterval(fetchData, 8000);
 
-    const interval = setInterval(fetchData, 8000);
-
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, []);
 
   console.log("gif data from home : ", gif);
+  console.log(searchResults, "=============== Search Results ===============");
 
   const renderContent = () => {
     switch (activeCategory) {
       case "gif":
         return (
-          <RenderMasonryGif gif={gif} openBottomSheetGIF={openBottomSheetGIF} />
+          <RenderMasonryGif
+            gif={gif}
+            openBottomSheetGIF={openBottomSheetGIF}
+            fetchData={fetchData}
+          />
         );
       case "foto":
         return (
@@ -187,6 +200,7 @@ export default function Home(props) {
             <RenderMasonryPhoto
               gif={gifExample}
               openBottomSheet={openBottomSheetPhoto}
+              fetchData={fetchData}
             />
           </>
         );
@@ -195,6 +209,7 @@ export default function Home(props) {
           <RenderMasonryVector
             gif={gifExample}
             openBottomSheet={openBottomSheetVector}
+            fetchData={fetchData}
           />
         );
       default:
@@ -202,20 +217,10 @@ export default function Home(props) {
     }
   };
 
-  // console.log("Gif Masonry Data : ", gif);
-
-  // if (loading) {
-  //   return (
-  //     <View style={styles.loadingContainer}>
-  //       <ActivityIndicator size="large" color="#A9329D" />
-  //     </View>
-  //   );
-  // }
-
   return (
     <>
       <View style={styles.container}>
-        <SearchPhotos />
+        <SearchPhotos onSearchResults={handleSearchResults} />
         <View style={styles.categoryContainer}>
           <TouchableOpacity
             style={[

@@ -166,14 +166,6 @@ const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
 
   const placeholderImage = require("../assets/images/placeholder-image-3.png");
 
-  // if (loading) {
-  //   return (
-  //     <View style={styles.loadingContainer}>
-  //       <ActivityIndicator size="large" color="#A9329D" />
-  //     </View>
-  //   );
-  // }
-
   console.log("======= GIF DETAIL DATA : ===========", gifData);
 
   return (
