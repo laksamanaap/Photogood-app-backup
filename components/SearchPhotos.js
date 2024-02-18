@@ -11,6 +11,7 @@ import {
   ScrollView,
   Button,
   FlatList,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { Component, useState, useEffect } from "react";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -32,7 +33,8 @@ const SearchPhotos = ({ onSearchResults }) => {
       console.log("Response in searching : ", response.data);
       onSearchResults(response.data);
     } catch (error) {
-      console.error("Error searching photos:", error);
+      console.log("Error searching photos:", error);
+      Alert.alert("An error occured!", error?.response.data.message);
     } finally {
       setLoading(false);
     }

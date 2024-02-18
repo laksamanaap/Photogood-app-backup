@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import DropDownPicker from "react-native-dropdown-picker";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import client from "../utils/client";
@@ -283,7 +282,7 @@ export default function Upload() {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Kategori Foto</Text>
-          <DropDownPicker
+          {/* <DropDownPicker
             open={open}
             value={value}
             items={items}
@@ -305,7 +304,7 @@ export default function Upload() {
             arrowStyle={{
               color: "#888",
             }}
-          />
+          /> */}
         </View>
         <View style={{ marginTop: 25 }}>
           <TouchableOpacity

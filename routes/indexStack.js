@@ -7,7 +7,12 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Entypo from "react-native-vector-icons/Entypo";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { View, Platform, TouchableOpacity } from "react-native";
+import {
+  View,
+  Platform,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+} from "react-native";
 import { useLoadFonts } from "../components/Fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -36,24 +41,6 @@ const screenOptions = {
 
 const MainTabs = ({ handleLogout }) => {
   console.log("Main Tabs Handle Logout : ", handleLogout);
-
-  // useEffect(() => {
-  //   const getTokenFromStorage = async () => {
-  //     try {
-  //       const token = await AsyncStorage.getItem("token");
-  //       if (token !== null) {
-  //         console.log("Main Tabs Token retrieved from AsyncStorage:", token);
-  //         setAuthenticated(true);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error retrieving token from AsyncStorage:", error);
-  //       AsyncStorage.removeItem("token");
-  //       handleLogout();
-  //     }
-  //   };
-
-  //   getTokenFromStorage();
-  // }, []);
 
   return (
     <Tab.Navigator screenOptions={screenOptions}>
@@ -156,50 +143,52 @@ const App = (props) => {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={screenOptions}>
-        <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
-          {() => <MainTabs handleLogout={handleLogout} />}
-        </Stack.Screen>
-        <Stack.Screen
-          options={({ navigation }) => ({
-            title: null,
-            headerShown: true,
-            headerStyle: {
-              elevation: 0,
-              shadowOpacity: 0,
-              borderBottomWidth: 0,
-              backgroundColor: "transparent",
-            },
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <View
-                  style={{
-                    marginTop: 16,
-                    marginLeft: 16,
-                    backgroundColor: "#A9329D",
-                    borderRadius: 50,
-                    padding: 4,
-                  }}
-                >
-                  <Entypo name="chevron-left" size={26} color="white" />
-                </View>
-              </TouchableOpacity>
-            ),
-          })}
-          name="Profile"
-          component={Profile}
-        />
-        <Stack.Screen
-          options={({ navigation }) => ({
-            title: null,
-            headerShown: false,
-          })}
-          name="Membership"
-          component={Membership}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={screenOptions}>
+          <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
+            {() => <MainTabs handleLogout={handleLogout} />}
+          </Stack.Screen>
+          <Stack.Screen
+            options={({ navigation }) => ({
+              title: null,
+              headerShown: true,
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+                backgroundColor: "transparent",
+              },
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <View
+                    style={{
+                      marginTop: 16,
+                      marginLeft: 16,
+                      backgroundColor: "#A9329D",
+                      borderRadius: 50,
+                      padding: 4,
+                    }}
+                  >
+                    <Entypo name="chevron-left" size={26} color="white" />
+                  </View>
+                </TouchableOpacity>
+              ),
+            })}
+            name="Profile"
+            component={Profile}
+          />
+          <Stack.Screen
+            options={({ navigation }) => ({
+              title: null,
+              headerShown: false,
+            })}
+            name="Membership"
+            component={Membership}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </KeyboardAvoidingView>
   );
 };
 

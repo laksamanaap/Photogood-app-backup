@@ -11,6 +11,8 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -134,7 +136,13 @@ export default function Login(props) {
           {isLoading ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={{ color: "white", textAlign: "center", fontSize: 16 }}>
+            <Text
+              style={{
+                color: "white",
+                textAlign: "center",
+                fontSize: 16,
+              }}
+            >
               Masuk
             </Text>
           )}
@@ -187,7 +195,7 @@ export default function Login(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
@@ -223,26 +231,12 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   OAuthDesc: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
     marginTop: 15,
     marginBottom: 15,
     color: "#6B6B6B",
-    fontFamily: "Poppins-Regular",
-  },
-  OAuthDescBottom: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 15,
-    marginBottom: 15,
-    color: "#6B6B6B",
-    fontSize: 16,
     fontFamily: "Poppins-Regular",
   },
   OAuthButton: {
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

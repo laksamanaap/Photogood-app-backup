@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import AuthNavigator from "./routes/authStack";
@@ -34,7 +35,11 @@ export default function App() {
   return (
     <>
       {authenticated ? (
-        <ClientNavigator screenProps={{ handleLogout: handleLogout }} />
+        <>
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+            <ClientNavigator screenProps={{ handleLogout: handleLogout }} />
+          </KeyboardAvoidingView>
+        </>
       ) : (
         <AuthNavigator
           screenProps={{ handleAuthenticated: handleAuthenticated }}

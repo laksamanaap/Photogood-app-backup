@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import Card from "../components/Card";
 import SearchPhotos from "../components/SearchPhotos";
@@ -219,77 +220,80 @@ export default function Home(props) {
 
   return (
     <>
-      <View style={styles.container}>
-        <SearchPhotos onSearchResults={handleSearchResults} />
-        <View style={styles.categoryContainer}>
-          <TouchableOpacity
-            style={[
-              styles.category,
-              activeCategory === "gif" && styles.activeCategory,
-            ]}
-            onPress={() => handleCategoryPress("gif")}
-          >
-            <MaterialCommunityIcon
-              name="file-gif-box"
-              size={20}
-              color="#888"
-              style={[activeCategory === "gif" && styles.activeGifIcon]}
-            />
-            <Text
-              style={[activeCategory === "gif" && styles.activeGifCategory]}
-            >
-              GIF
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.category,
-              activeCategory === "foto" && styles.activeCategory,
-            ]}
-            onPress={() => handleCategoryPress("foto")}
-          >
-            <MaterialIcon
-              name="photo-camera"
-              size={20}
-              color="#888"
-              style={[activeCategory === "foto" && styles.activeGifIcon]}
-            />
-            <Text
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+        <View style={styles.container}>
+          {/* Soon to be handled, seperated search */}
+          <SearchPhotos onSearchResults={handleSearchResults} />
+          <View style={styles.categoryContainer}>
+            <TouchableOpacity
               style={[
-                activeCategory === "foto"
-                  ? styles.activeGifCategory
-                  : styles.text,
+                styles.category,
+                activeCategory === "gif" && styles.activeCategory,
               ]}
+              onPress={() => handleCategoryPress("gif")}
             >
-              Foto
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.category,
-              activeCategory === "vector" && styles.activeCategory,
-            ]}
-            onPress={() => handleCategoryPress("vector")}
-          >
-            <FontAwesome
-              name="paint-brush"
-              size={20}
-              color="#888"
-              style={[activeCategory === "vector" && styles.activeGifIcon]}
-            />
-            <Text
+              <MaterialCommunityIcon
+                name="file-gif-box"
+                size={20}
+                color="#888"
+                style={[activeCategory === "gif" && styles.activeGifIcon]}
+              />
+              <Text
+                style={[activeCategory === "gif" && styles.activeGifCategory]}
+              >
+                GIF
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[
-                activeCategory === "vector"
-                  ? styles.activeGifCategory
-                  : styles.text,
+                styles.category,
+                activeCategory === "foto" && styles.activeCategory,
               ]}
+              onPress={() => handleCategoryPress("foto")}
             >
-              Vector
-            </Text>
-          </TouchableOpacity>
+              <MaterialIcon
+                name="photo-camera"
+                size={20}
+                color="#888"
+                style={[activeCategory === "foto" && styles.activeGifIcon]}
+              />
+              <Text
+                style={[
+                  activeCategory === "foto"
+                    ? styles.activeGifCategory
+                    : styles.text,
+                ]}
+              >
+                Foto
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.category,
+                activeCategory === "vector" && styles.activeCategory,
+              ]}
+              onPress={() => handleCategoryPress("vector")}
+            >
+              <FontAwesome
+                name="paint-brush"
+                size={20}
+                color="#888"
+                style={[activeCategory === "vector" && styles.activeGifIcon]}
+              />
+              <Text
+                style={[
+                  activeCategory === "vector"
+                    ? styles.activeGifCategory
+                    : styles.text,
+                ]}
+              >
+                Vector
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {renderContent()}
         </View>
-        {renderContent()}
-      </View>
+      </KeyboardAvoidingView>
       <BottomSheetUI
         ref={sheetRef}
         height={685}
