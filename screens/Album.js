@@ -31,7 +31,7 @@ export default function Album({ navigation }) {
       name: "Album kenangan",
       index: 2,
       image: require("../assets/images/kucing.png"),
-      totalData: 12,
+      totalData: 10,
     },
     {
       name: "Album kenangan",

@@ -17,7 +17,6 @@ const RenderMasonryList = ({ gif, photo }) => {
   const oddItems = gif.filter((_, index) => index % 2 !== 0);
   const evenItems = gif.filter((_, index) => index % 2 === 0);
 
-  console.log(oddItems, "Odd Bookmark");
   return (
     <ScrollView>
       <View
@@ -32,7 +31,7 @@ const RenderMasonryList = ({ gif, photo }) => {
             <TouchableOpacity key={index}>
               <View style={[styles.card, { height: getRandomHeight() }]}>
                 <Image
-                  source={{ uri: item.lokasi_file }}
+                  source={{ uri: item.foto.lokasi_file }}
                   style={styles.image}
                 />
               </View>
@@ -44,7 +43,7 @@ const RenderMasonryList = ({ gif, photo }) => {
             <TouchableOpacity key={index}>
               <View style={[styles.card, { height: getRandomHeight() }]}>
                 <Image
-                  source={{ uri: item.lokasi_file }}
+                  source={{ uri: item.foto.lokasi_file }}
                   style={styles.image}
                 />
               </View>

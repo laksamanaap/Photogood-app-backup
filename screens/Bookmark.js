@@ -4,25 +4,41 @@ import {
   View,
   Image,
   TouchableOpacity,
+  Animated,
   ScrollView,
   FlatList,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import RenderMasonryBookmark from "../components/RenderMasonryBookmark";
+import RenderMasonryBookmarkSaved from "../components/RenderMasonryBookmarkSaved";
 import BottomSheetUI from "../components/BottomSheetUI";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import client from "../utils/client";
 
 export default function Bookmark({ navigation }) {
+  const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [userStatus, setUserStatus] = useState("1");
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const sheetRef = useRef(null);
   const [selectedCardID, setSelectedCardID] = useState(null);
   const [selectedCardName, setSelectedCardName] = useState(null);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
   const [profileImage, setProfileImage] = useState(
     require("../assets/images/placeholder-image-3.png")
   );
-  console.log("Navigation : ", navigation);
-
   const [activeTab, setActiveTab] = useState("posts");
 
-  const sheetRef = useRef(null);
+  const [post, setPost] = useState([]);
+  const [saved, setSaved] = useState([]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
 
   const openBottomSheet = (cardID, cardName, cardImage) => {
     setSelectedCardID(cardID);
@@ -31,119 +47,109 @@ export default function Bookmark({ navigation }) {
     sheetRef.current?.open();
   };
 
-  const [gif, setGif] = useState([
-    {
-      name: "Ini Gif Satu",
-      index: 1,
-      image: require("../assets/images/bunga.png"),
-    },
-    {
-      name: "Ini Gif Dua",
-      index: 2,
-      image: require("../assets/images/kucing.png"),
-    },
-    {
-      name: "Ini Gif Tiga",
-      index: 3,
-      image: require("../assets/images/gigi.png"),
-    },
-    {
-      name: "Ini Gif Empat",
-      index: 4,
-      image: require("../assets/images/kucing.png"),
-    },
-    {
-      name: "Ini Gif Lima",
-      index: 5,
-      image: require("../assets/images/gigi.png"),
-    },
-    {
-      name: "Ini Gif Enam",
-      index: 6,
-      image: require("../assets/images/bunga.png"),
-    },
-    {
-      name: "Ini Gif Satu",
-      index: 7,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      name: "Ini Gif Satu",
-      index: 8,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-  ]);
-
-  const posts = [
-    {
-      key: 1,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 2,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 3,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 4,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 5,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 6,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 7,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 8,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 9,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 10,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 11,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-  ];
-
-  const savedItems = [
-    {
-      key: 1,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-    {
-      key: 2,
-      image: require("../assets/images/placeholder-image-3.png"),
-    },
-  ];
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
+  const getTokenFromStorage = async () => {
+    try {
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedToken !== null) {
+        setToken(storedToken);
+        console.log("token settings : ", storedToken);
+      }
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+    }
   };
+
+  const fetchUserDetail = async () => {
+    try {
+      const response = await client.get(`v1/show-user-detail?token=${token}`);
+      console.log("bookmark user detail : ", response?.data);
+      setUserData(response?.data);
+      setUserStatus(response?.data.status);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUserPost = async () => {
+    try {
+      const response = await client.get(`v1/show-user-post?token=${token}`);
+      console.log("upload user post  : ", response?.data);
+      setPost(response?.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUserBookmark = async () => {
+    try {
+      const response = await client.get(`v2/show-all-bookmark?token=${token}`);
+      console.log("upload user bookmark  : ", response?.data);
+      setSaved(response?.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getTokenFromStorage();
+    fetchUserDetail();
+    fetchUserPost();
+    fetchUserBookmark();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchUserDetail();
+      await fetchUserPost();
+      await fetchUserBookmark();
+    } catch (error) {
+      console.error("Error refreshing user detail:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#A9329D" />
+      </View>
+    );
+  }
+
+  // console.log(saved, "BOOKMARK SAVEDD");
 
   return (
     <>
       <View style={styles.container}>
-        <Image
-          style={styles.profileImage}
-          source={profileImage}
-          resizeMode="contain"
-        />
+        {userData?.foto_profil ? (
+          <Image
+            source={{ uri: userData?.foto_profil }}
+            style={{
+              width: 120,
+              height: 120,
+              borderRadius: 100,
+              marginBottom: 15,
+            }}
+          />
+        ) : (
+          <Image
+            source={profileImage}
+            style={{
+              width: 120,
+              height: 120,
+              borderRadius: 100,
+              marginBottom: 15,
+            }}
+          />
+        )}
         <View style={{ marginBottom: 20 }}>
           <TouchableOpacity
             style={[styles.tabButton]}
@@ -189,7 +195,37 @@ export default function Bookmark({ navigation }) {
           </TouchableOpacity>
         </View>
       </View>
-      <RenderMasonryBookmark gif={gif} openBottomSheet={openBottomSheet} />
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {activeTab === "posts" ? (
+          post.length > 0 ? (
+            <RenderMasonryBookmark
+              gif={post}
+              openBottomSheet={openBottomSheet}
+            />
+          ) : (
+            <View style={styles.textWrapper}>
+              <Text style={styles.textBookmark}>
+                User belum memosting apapun!
+              </Text>
+            </View>
+          )
+        ) : saved.length > 0 ? (
+          <RenderMasonryBookmarkSaved
+            gif={saved}
+            openBottomSheet={openBottomSheet}
+          />
+        ) : (
+          <View style={styles.textWrapper}>
+            <Text style={styles.textBookmark}>
+              User belum menyimpan apapun!
+            </Text>
+          </View>
+        )}
+      </ScrollView>
       <BottomSheetUI
         ref={sheetRef}
         height={685}
@@ -208,7 +244,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileImage: {
-    borderRadius: 30,
+    borderRadius: 50,
     marginBottom: 20,
   },
   buttonContainer: {
@@ -221,7 +257,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ECECEC",
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     borderRadius: 50,
     marginHorizontal: 5,
   },
@@ -242,5 +278,18 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     borderRadius: 8,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textBookmark: {
+    fontFamily: "Poppins-Bold",
+  },
+  textWrapper: {
+    flexDirection: "row",
+    justifyContent: "center",
+    padding: 30,
   },
 });
