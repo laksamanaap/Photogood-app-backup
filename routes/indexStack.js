@@ -12,6 +12,7 @@ import {
   Platform,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import { useLoadFonts } from "../components/Fonts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -43,6 +44,28 @@ const screenOptions = {
 
 const MainTabs = ({ handleLogout }) => {
   console.log("Main Tabs Handle Logout : ", handleLogout);
+
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardOpen(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardOpen(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   return (
     <Tab.Navigator screenOptions={screenOptions}>
@@ -84,7 +107,7 @@ const MainTabs = ({ handleLogout }) => {
                 backgroundColor: "#A9329D",
                 width: Platform.OS === "ios" ? 50 : 60,
                 height: Platform.OS === "ios" ? 50 : 60,
-                top: Platform.OS === "ios" ? -10 : -25,
+                top: keyboardOpen ? -5 : -25,
                 borderRadius: Platform.OS === "ios" ? 25 : 30,
                 shadowColor: "#A9329D",
                 shadowOffset: { width: 5, height: 5 },
