@@ -25,6 +25,7 @@ import Upload from "../screens/Upload";
 import Bookmark from "../screens/Bookmark";
 import Settings from "../screens/Settings";
 import Membership from "../screens/Membership";
+import Album from "../screens/Album";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -33,6 +34,7 @@ const screenOptions = {
   tabBarShadow: false,
   tabBarShowLabel: false,
   headerShown: false,
+  tabBarHideOnKeyboard: true,
   tabBarStyle: {
     height: 70,
     backgroundColor: "#fff",
@@ -177,6 +179,35 @@ const App = (props) => {
             })}
             name="Profile"
             component={Profile}
+          />
+          <Stack.Screen
+            options={({ navigation }) => ({
+              title: null,
+              headerShown: true,
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+                backgroundColor: "transparent",
+              },
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <View
+                    style={{
+                      marginTop: 16,
+                      marginLeft: 16,
+                      backgroundColor: "#A9329D",
+                      borderRadius: 50,
+                      padding: 4,
+                    }}
+                  >
+                    <Entypo name="chevron-left" size={26} color="white" />
+                  </View>
+                </TouchableOpacity>
+              ),
+            })}
+            name="Album"
+            component={Album}
           />
           <Stack.Screen
             options={({ navigation }) => ({

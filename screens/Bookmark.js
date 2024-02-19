@@ -8,7 +8,7 @@ import {
   FlatList,
 } from "react-native";
 import React, { useState, useRef } from "react";
-import RenderMasonryList from "../components/RenderMasonryPhoto";
+import RenderMasonryBookmark from "../components/RenderMasonryBookmark";
 import BottomSheetUI from "../components/BottomSheetUI";
 
 export default function Bookmark({ navigation }) {
@@ -138,60 +138,58 @@ export default function Bookmark({ navigation }) {
 
   return (
     <>
-      <View style={{ padding: 20 }}>
-        <View style={styles.container}>
-          <Image
-            style={styles.profileImage}
-            source={profileImage}
-            resizeMode="contain"
-          />
-          <View style={{ marginBottom: 20 }}>
-            <TouchableOpacity
-              style={[styles.tabButton]}
-              onPress={() => navigation.navigate("Profile")}
-            >
-              <Text style={styles.tabButtonText}>Edit Profil</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.tabButton,
-                activeTab === "posts" && styles.activeTabButton,
-              ]}
-              onPress={() => handleTabChange("posts")}
-            >
-              <Text
-                style={
-                  activeTab === "posts"
-                    ? styles.tabButtonTextBold
-                    : styles.tabButtonText
-                }
-              >
-                Postingan Anda
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.tabButton,
-                activeTab === "saved" && styles.activeTabButton,
-              ]}
-              onPress={() => handleTabChange("saved")}
-            >
-              <Text
-                style={
-                  activeTab === "saved"
-                    ? styles.tabButtonTextBold
-                    : styles.tabButtonText
-                }
-              >
-                Disimpan
-              </Text>
-            </TouchableOpacity>
-          </View>
+      <View style={styles.container}>
+        <Image
+          style={styles.profileImage}
+          source={profileImage}
+          resizeMode="contain"
+        />
+        <View style={{ marginBottom: 20 }}>
+          <TouchableOpacity
+            style={[styles.tabButton]}
+            onPress={() => navigation.navigate("Profile")}
+          >
+            <Text style={styles.tabButtonText}>Edit Profil</Text>
+          </TouchableOpacity>
         </View>
-        <RenderMasonryList gif={gif} openBottomSheet={openBottomSheet} />
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.tabButton,
+              activeTab === "posts" && styles.activeTabButton,
+            ]}
+            onPress={() => handleTabChange("posts")}
+          >
+            <Text
+              style={
+                activeTab === "posts"
+                  ? styles.tabButtonTextBold
+                  : styles.tabButtonText
+              }
+            >
+              Postingan Anda
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.tabButton,
+              activeTab === "saved" && styles.activeTabButton,
+            ]}
+            onPress={() => handleTabChange("saved")}
+          >
+            <Text
+              style={
+                activeTab === "saved"
+                  ? styles.tabButtonTextBold
+                  : styles.tabButtonText
+              }
+            >
+              Disimpan
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
+      <RenderMasonryBookmark gif={gif} openBottomSheet={openBottomSheet} />
       <BottomSheetUI
         ref={sheetRef}
         height={685}

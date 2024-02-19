@@ -189,7 +189,10 @@ const Settings = (props) => {
             <Entypo name="chevron-right" size={18} color={"#000000"} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingsCardSecondary}>
+        <TouchableOpacity
+          style={styles.settingsCardSecondary}
+          onPress={() => navigation.navigate("Album")}
+        >
           <View style={styles.settinggsCardSecondaryContainer}>
             <View style={styles.settingsCardSecondaryIcon}>
               <Feather name="image" size={18} color={"#A9329D"} />
