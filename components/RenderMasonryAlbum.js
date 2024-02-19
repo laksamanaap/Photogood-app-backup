@@ -9,7 +9,7 @@ import {
   Text,
 } from "react-native";
 
-const RenderMasonryList = ({ gif, photo }) => {
+const RenderMasonryList = ({ gif, photo, navigation }) => {
   const oddItems = gif.filter((_, index) => index % 2 !== 0);
   const evenItems = gif.filter((_, index) => index % 2 === 0);
 
@@ -24,7 +24,11 @@ const RenderMasonryList = ({ gif, photo }) => {
       >
         <View style={{ flex: 1, flexDirection: "column" }}>
           {oddItems.map((item, index) => (
-            <TouchableOpacity key={index} style={styles.cardContainer}>
+            <TouchableOpacity
+              key={index}
+              style={styles.cardContainer}
+              onPress={navigation}
+            >
               <View style={[styles.card, { height: 150 }]}>
                 <Image source={item.image} style={styles.image} />
               </View>

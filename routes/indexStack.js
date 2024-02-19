@@ -27,6 +27,7 @@ import Bookmark from "../screens/Bookmark";
 import Settings from "../screens/Settings";
 import Membership from "../screens/Membership";
 import Album from "../screens/Album";
+import AlbumDetail from "../screens/AlbumDetail";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -231,6 +232,14 @@ const App = (props) => {
             })}
             name="Album"
             component={Album}
+          />
+          <Stack.Screen
+            options={({ navigation }) => ({
+              title: null,
+              headerShown: false,
+            })}
+            name="AlbumDetail"
+            component={AlbumDetail}
           />
           <Stack.Screen
             options={({ navigation }) => ({

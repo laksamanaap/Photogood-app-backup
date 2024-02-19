@@ -30,6 +30,8 @@ const RenderMasonryList = ({ gif, gifID, openBottomSheetGIF, fetchData }) => {
   const oddItems = gif.filter((_, index) => index % 2 !== 0);
   const evenItems = gif.filter((_, index) => index % 2 === 0);
 
+  console.log("GIF DATA====================", gif);
+
   return (
     <ScrollView
       refreshControl={

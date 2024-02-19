@@ -11,7 +11,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import SearchAlbum from "../components/SearchAlbum";
 import BottomSheetUI from "../components/BottomSheetAlbum";
 
-export default function Album() {
+export default function Album({ navigation }) {
   const [selectedCardID, setSelectedCardID] = useState(null);
   const [selectedCardName, setSelectedCardName] = useState(null);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
@@ -43,6 +43,10 @@ export default function Album() {
 
   const sheetRef = useRef(null);
 
+  const handleNavigation = () => {
+    navigation.navigate("AlbumDetail");
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -57,7 +61,7 @@ export default function Album() {
         </View>
         <SearchAlbum />
       </View>
-      <RenderMasonryAlbum gif={gif} />
+      <RenderMasonryAlbum gif={gif} navigation={handleNavigation} />
       <BottomSheetUI ref={sheetRef} height={600} />
     </>
   );
