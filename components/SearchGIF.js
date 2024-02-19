@@ -23,6 +23,7 @@ const SearchPhotos = ({ onSearchResults }) => {
 
   const handleSearch = async () => {
     if (!searchQuery) {
+      Alert.alert("An error occured!", "Text input tidak boleh kosong");
       return;
     }
     try {
@@ -45,7 +46,7 @@ const SearchPhotos = ({ onSearchResults }) => {
       <AntDesign name="search1" size={20} color="#888" style={styles.icon} />
       <TextInput
         style={styles.inputSearch}
-        placeholder="Temukan lebih banyak Foto"
+        placeholder="Temukan lebih banyak GIF"
         onChangeText={(text) => setSearchQuery(text)}
         onSubmitEditing={handleSearch}
       />

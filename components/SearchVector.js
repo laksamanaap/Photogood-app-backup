@@ -45,7 +45,7 @@ const SearchPhotos = ({ onSearchResults }) => {
       <AntDesign name="search1" size={20} color="#888" style={styles.icon} />
       <TextInput
         style={styles.inputSearch}
-        placeholder="Temukan lebih banyak Foto"
+        placeholder="Temukan lebih banyak Vector"
         onChangeText={(text) => setSearchQuery(text)}
         onSubmitEditing={handleSearch}
       />

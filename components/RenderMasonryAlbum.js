@@ -6,13 +6,10 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  Text,
 } from "react-native";
 
 const RenderMasonryList = ({ gif, photo }) => {
-  const getRandomHeight = () => {
-    return Math.floor(Math.random() * 200) + 100;
-  };
-
   const oddItems = gif.filter((_, index) => index % 2 !== 0);
   const evenItems = gif.filter((_, index) => index % 2 === 0);
 
@@ -27,19 +24,23 @@ const RenderMasonryList = ({ gif, photo }) => {
       >
         <View style={{ flex: 1, flexDirection: "column" }}>
           {oddItems.map((item, index) => (
-            <TouchableOpacity key={index}>
-              <View style={[styles.card, { height: getRandomHeight() }]}>
+            <TouchableOpacity key={index} style={styles.cardContainer}>
+              <View style={[styles.card, { height: 150 }]}>
                 <Image source={item.image} style={styles.image} />
               </View>
+              <Text style={styles.cardText}>{item.name}</Text>
+              <Text style={styles.cardTextSmall}>{item.totalData}</Text>
             </TouchableOpacity>
           ))}
         </View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           {evenItems.map((item, index) => (
-            <TouchableOpacity key={index}>
-              <View style={[styles.card, { height: getRandomHeight() }]}>
+            <TouchableOpacity key={index} style={styles.cardContainer}>
+              <View style={[styles.card, { height: 150 }]}>
                 <Image source={item.image} style={styles.image} />
               </View>
+              <Text style={styles.cardText}>{item.name}</Text>
+              <Text style={styles.cardTextSmall}>{item.totalData}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -55,9 +56,23 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
   },
+  cardContainer: {
+    marginBottom: 8,
+  },
+  cardText: {
+    marginLeft: 16,
+    fontSize: 14,
+    fontFamily: "Poppins-Bold",
+  },
+  cardTextSmall: {
+    marginLeft: 16,
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
+  },
   image: {
     width: "100%",
     height: "100%",
+    borderRadius: 24,
   },
 });
 

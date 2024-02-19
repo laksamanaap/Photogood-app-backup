@@ -12,7 +12,10 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import Card from "../components/Card";
+
+import SearchGIF from "../components/SearchGIF";
 import SearchPhotos from "../components/SearchPhotos";
+import SearchVector from "../components/SearchVector";
 
 import BottomSheetUI from "../components/BottomSheetUI";
 import BottomSheetGIF from "../components/BottomSheetGIF";
@@ -131,10 +134,16 @@ export default function Home(props) {
     sheetRef.current?.open();
   };
 
-  const handleSearchResults = (results) => {
-    // setSearchResults(results);
-    console.log(results, "========= RESULTS IN FUNCTION ===============");
+  const handleGIFSearchResults = (results) => {
     setGIF(results);
+  };
+
+  const handlePhotosSearchResults = (results) => {
+    setPhoto(results);
+  };
+
+  const handleVectorSearchResults = (results) => {
+    setVector(results);
   };
 
   // Fetch Data
@@ -222,8 +231,13 @@ export default function Home(props) {
     <>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
         <View style={styles.container}>
-          {/* Soon to be handled, seperated search */}
-          <SearchPhotos onSearchResults={handleSearchResults} />
+          {activeCategory === "gif" ? (
+            <SearchGIF onSearchResults={handleGIFSearchResults} />
+          ) : activeCategory === "foto" ? (
+            <SearchPhotos onSearchResults={handlePhotosSearchResults} />
+          ) : activeCategory === "vector" ? (
+            <SearchVector onSearchResults={handleVectorSearchResults} />
+          ) : null}
           <View style={styles.categoryContainer}>
             <TouchableOpacity
               style={[

@@ -203,6 +203,7 @@ export default function Bookmark({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 24,
     padding: 35,
     alignItems: "center",
   },
@@ -214,7 +215,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
   },
   tabButton: {
     minWidth: 150,

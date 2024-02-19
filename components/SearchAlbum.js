@@ -21,33 +21,13 @@ const SearchPhotos = ({ onSearchResults }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
-    if (!searchQuery) {
-      return;
-    }
-    try {
-      setLoading(true);
-      const response = await client.get(
-        `/search-photo?judul_foto=${searchQuery}&deskripsi_foto=${searchQuery}`
-      );
-      console.log("Response in searching : ", response.data);
-      onSearchResults(response.data);
-    } catch (error) {
-      console.log("Error searching photos:", error);
-      Alert.alert("An error occured!", error?.response.data.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <View style={styles.inputSearchContainer}>
       <AntDesign name="search1" size={20} color="#888" style={styles.icon} />
       <TextInput
         style={styles.inputSearch}
-        placeholder="Temukan lebih banyak Foto"
+        placeholder="Temukan Album Anda"
         onChangeText={(text) => setSearchQuery(text)}
-        onSubmitEditing={handleSearch}
       />
     </View>
   );
