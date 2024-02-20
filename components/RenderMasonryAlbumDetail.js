@@ -10,12 +10,19 @@ import {
 
 const RenderMasonryList = ({ gif }) => {
   const itemsPerRow = 4;
+
+  const albumDetailPhotos = gif?.bookmark_fotos;
+  console.log(albumDetailPhotos, "MASONRY ALBUM DETAIL ");
+
   return (
     <ScrollView>
       <View style={styles.container}>
-        {gif.map((item, index) => (
+        {albumDetailPhotos?.map((item, index) => (
           <TouchableOpacity key={index} style={[styles.cardContainer]}>
-            <Image source={item.image} style={styles.image} />
+            <Image
+              source={{ uri: item?.foto.lokasi_file }}
+              style={styles.image}
+            />
           </TouchableOpacity>
         ))}
       </View>

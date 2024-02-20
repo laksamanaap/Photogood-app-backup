@@ -4,49 +4,84 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import RenderMasonryAlbum from "../components/RenderMasonryAlbum";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import SearchAlbum from "../components/SearchAlbum";
 import BottomSheetUI from "../components/BottomSheetAlbum";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import client from "../utils/client";
+
 export default function Album({ navigation }) {
   const [selectedCardID, setSelectedCardID] = useState(null);
   const [selectedCardName, setSelectedCardName] = useState(null);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
+  const [token, setToken] = useState(null);
+  const [album, setAlbum] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const openBottomSheet = (cardID, cardName, cardImage) => {
     sheetRef.current?.open();
   };
 
-  const [gif, setGif] = useState([
-    {
-      name: "Album kenangan",
-      index: 1,
-      image: require("../assets/images/bunga.png"),
-      totalData: 14,
-    },
-    {
-      name: "Album kenangan",
-      index: 2,
-      image: require("../assets/images/kucing.png"),
-      totalData: 10,
-    },
-    {
-      name: "Album kenangan",
-      index: 3,
-      image: require("../assets/images/gigi.png"),
-      totalData: 24,
-    },
-  ]);
-
   const sheetRef = useRef(null);
 
-  const handleNavigation = () => {
-    navigation.navigate("AlbumDetail");
+  const handleNavigation = (albumID) => {
+    // console.log(albumID, "=============== ALBUM ID ======================");
+    navigation.navigate("AlbumDetail", { id_album: albumID });
   };
 
+  const getTokenFromStorage = async () => {
+    try {
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedToken !== null) {
+        setToken(storedToken);
+        console.log("token settings : ", storedToken);
+      }
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+    }
+  };
+
+  const fetchMemberAlbum = async () => {
+    try {
+      const response = await client.get(`v2/show-album?token=${token}`);
+      // console.log("member album list", response?.data);
+      setAlbum(response?.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getTokenFromStorage();
+    fetchMemberAlbum();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchMemberAlbum();
+    } catch (error) {
+      console.error("Error refreshing user detail:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#A9329D" />
+      </View>
+    );
+  }
   return (
     <>
       <View style={styles.container}>
@@ -61,7 +96,13 @@ export default function Album({ navigation }) {
         </View>
         <SearchAlbum />
       </View>
-      <RenderMasonryAlbum gif={gif} navigation={handleNavigation} />
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <RenderMasonryAlbum album={album} navigation={handleNavigation} />
+      </ScrollView>
       <BottomSheetUI ref={sheetRef} height={600} />
     </>
   );
@@ -77,5 +118,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

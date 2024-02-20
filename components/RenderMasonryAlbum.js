@@ -9,9 +9,11 @@ import {
   Text,
 } from "react-native";
 
-const RenderMasonryList = ({ gif, photo, navigation }) => {
-  const oddItems = gif.filter((_, index) => index % 2 !== 0);
-  const evenItems = gif.filter((_, index) => index % 2 === 0);
+const RenderMasonryList = ({ album, photo, navigation }) => {
+  const oddItems = album.filter((_, index) => index % 2 !== 0);
+  const evenItems = album.filter((_, index) => index % 2 === 0);
+
+  const lastEvenIndex = evenItems.length - 1;
 
   return (
     <ScrollView>
@@ -27,24 +29,55 @@ const RenderMasonryList = ({ gif, photo, navigation }) => {
             <TouchableOpacity
               key={index}
               style={styles.cardContainer}
-              onPress={navigation}
+              onPress={() => navigation(item.album_id)}
             >
               <View style={[styles.card, { height: 150 }]}>
-                <Image source={item.image} style={styles.image} />
+                {item?.bookmark_fotos.length > 0 ? (
+                  <Image
+                    source={{
+                      uri: item.bookmark_fotos[item.bookmark_fotos.length - 1]
+                        ?.foto.lokasi_file,
+                    }}
+                    style={styles.image}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/images/placeholder-image-3.png")}
+                    style={styles.image}
+                  />
+                )}
               </View>
-              <Text style={styles.cardText}>{item.name}</Text>
-              <Text style={styles.cardTextSmall}>{item.totalData}</Text>
+              <Text style={styles.cardText}>{item.nama_album}</Text>
+              <Text style={styles.cardTextSmall}>
+                {item.total_bookmark_data}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
         <View style={{ flex: 1, flexDirection: "column" }}>
           {evenItems.map((item, index) => (
-            <TouchableOpacity key={index} style={styles.cardContainer}>
+            <TouchableOpacity
+              key={index}
+              style={styles.cardContainer}
+              onPress={() => navigation(item.album_id)}
+            >
               <View style={[styles.card, { height: 150 }]}>
-                <Image source={item.image} style={styles.image} />
+                {item?.bookmark_fotos.length > 0 ? (
+                  <Image
+                    source={{
+                      uri: item.bookmark_fotos[item.bookmark_fotos.length - 1]
+                        ?.foto.lokasi_file,
+                    }}
+                    style={styles.image}
+                  />
+                ) : (
+                  <Text>Raenek</Text>
+                )}
               </View>
-              <Text style={styles.cardText}>{item.name}</Text>
-              <Text style={styles.cardTextSmall}>{item.totalData}</Text>
+              <Text style={styles.cardText}>{item.nama_album}</Text>
+              <Text style={styles.cardTextSmall}>
+                {item.total_bookmark_data}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
