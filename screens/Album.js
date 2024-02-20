@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useState, useRef, useEffect } from "react";
 import RenderMasonryAlbum from "../components/RenderMasonryAlbum";
@@ -55,7 +56,23 @@ export default function Album({ navigation }) {
       setAlbum(response?.data);
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log(error, "Error Album");
+      setLoading(false);
+      if (error?.response.status === 401) {
+        setLoading(true);
+        Alert.alert(
+          "An error occurred!",
+          "Anda harus menjadi member terlebih dahulu untuk mengakses album!",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate("Home");
+              },
+            },
+          ]
+        );
+      }
     }
   };
 
@@ -106,7 +123,32 @@ export default function Album({ navigation }) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <RenderMasonryAlbum album={album} navigation={handleNavigation} />
+        {album.length > 0 ? (
+          <RenderMasonryAlbum album={album} navigation={handleNavigation} />
+        ) : (
+          <View style={styles.textWrapper}>
+            <Text style={styles.textBookmark}>
+              Album anda kosong! Tambahkan album untuk memulai.
+            </Text>
+            <View style={styles.buttonWrapper}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => openBottomSheet()}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    textAlign: "center",
+                    fontSize: 14,
+                    fontFamily: "Poppins-Regular",
+                  }}
+                >
+                  Tambah Album
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </ScrollView>
       <BottomSheetUI ref={sheetRef} height={600} />
     </>
@@ -128,5 +170,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  textBookmark: {
+    fontFamily: "Poppins-Bold",
+    textAlign: "center",
+  },
+  textWrapper: {
+    flexDirection: "column",
+    justifyContent: "center",
+    padding: 30,
+    gap: 16,
+  },
+  button: {
+    width: "50%",
+    backgroundColor: "#A9329D",
+    padding: 4,
+    borderRadius: 50,
+  },
+  buttonWrapper: {
+    flexDirection: "row",
+    justifyContent: "center",
   },
 });

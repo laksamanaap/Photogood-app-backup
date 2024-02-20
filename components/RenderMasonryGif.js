@@ -32,61 +32,63 @@ const RenderMasonryList = ({ gif, gifID, openBottomSheetGIF, fetchData }) => {
   const evenItems = gif.filter((_, index) => index % 2 === 0);
 
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <View style={{ flexDirection: "row", paddingBottom: 100 }}>
-        <View style={{ flex: 1, flexDirection: "column" }}>
-          {oddItems.map((item, index) => {
-            console.log("item from odditems : ", item);
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() =>
-                  openBottomSheetGIF(
-                    item.foto_id,
-                    item.judul_foto,
-                    item.lokasi_file
-                  )
-                }
-              >
-                <View style={[styles.card, { height: getRandomHeight() }]}>
-                  <Image
-                    source={{ uri: item.lokasi_file }}
-                    style={styles.image}
-                  />
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+    <>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={{ flexDirection: "row", paddingBottom: 100 }}>
+          <View style={{ flex: 1, flexDirection: "column" }}>
+            {oddItems.map((item, index) => {
+              console.log("item from odditems : ", item);
+              return (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() =>
+                    openBottomSheetGIF(
+                      item.foto_id,
+                      item.judul_foto,
+                      item.lokasi_file
+                    )
+                  }
+                >
+                  <View style={[styles.card, { height: getRandomHeight() }]}>
+                    <Image
+                      source={{ uri: item.lokasi_file }}
+                      style={styles.image}
+                    />
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          <View style={{ flex: 1, flexDirection: "column" }}>
+            {evenItems.map((item, index) => {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() =>
+                    openBottomSheetGIF(
+                      item.foto_id,
+                      item.judul_foto,
+                      item.lokasi_file
+                    )
+                  }
+                >
+                  <View style={[styles.card, { height: getRandomHeight() }]}>
+                    <Image
+                      source={{ uri: item.lokasi_file }}
+                      style={styles.image}
+                    />
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
-        <View style={{ flex: 1, flexDirection: "column" }}>
-          {evenItems.map((item, index) => {
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() =>
-                  openBottomSheetGIF(
-                    item.foto_id,
-                    item.judul_foto,
-                    item.lokasi_file
-                  )
-                }
-              >
-                <View style={[styles.card, { height: getRandomHeight() }]}>
-                  <Image
-                    source={{ uri: item.lokasi_file }}
-                    style={styles.image}
-                  />
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 

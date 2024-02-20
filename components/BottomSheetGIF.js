@@ -21,349 +21,361 @@ import Feather from "react-native-vector-icons/Feather";
 import Foundation from "react-native-vector-icons/Foundation";
 
 import client from "../utils/client";
+import BottomSheetAlbumList from "./BottomSheetAlbumList";
 
-const BottomSheetGIF = forwardRef(({ height, id, name, image }, ref) => {
-  console.log("gif id : ", id);
+const BottomSheetGIF = forwardRef(
+  ({ height, id, name, image, navigation }, ref) => {
+    console.log("gif id : ", id);
 
-  const [gifData, setGifData] = useState({});
-  const [commentData, setCommentData] = useState([]);
+    const [gifData, setGifData] = useState({});
+    const [commentData, setCommentData] = useState([]);
 
-  const [isLoved, setIsLoved] = useState(false);
-  const [isBookmark, setIsBookmark] = useState(false);
-  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
-  const [loading, setLoading] = useState(true);
+    const [isLoved, setIsLoved] = useState(false);
+    const [isBookmark, setIsBookmark] = useState(false);
+    const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-  const loveAnimation = useRef(new Animated.Value(0)).current;
-  const [isShining, setIsShining] = useState(false);
-  const shiningAnimation = useRef(new Animated.Value(0)).current;
+    const loveAnimation = useRef(new Animated.Value(0)).current;
+    const [isShining, setIsShining] = useState(false);
+    const shiningAnimation = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const shiningInterval = setInterval(() => {
-      setIsShining((prevIsShining) => !prevIsShining);
-    }, 1000);
+    useEffect(() => {
+      const shiningInterval = setInterval(() => {
+        setIsShining((prevIsShining) => !prevIsShining);
+      }, 1000);
 
-    return () => clearInterval(shiningInterval);
-  }, []);
+      return () => clearInterval(shiningInterval);
+    }, []);
 
-  useEffect(() => {
-    if (isShining) {
-      Animated.timing(shiningAnimation, {
+    useEffect(() => {
+      if (isShining) {
+        Animated.timing(shiningAnimation, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        Animated.timing(shiningAnimation, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }).start();
+      }
+    }, [isShining]);
+
+    const toggleLove = () => {
+      setIsLoved(!isLoved);
+      startLoveAnimation();
+    };
+
+    const toggleBookmark = () => {
+      setIsBookmark(!isBookmark);
+    };
+
+    const startLoveAnimation = () => {
+      Animated.timing(loveAnimation, {
         toValue: 1,
-        duration: 500,
+        duration: 1500,
         useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.timing(shiningAnimation, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
+      }).start(() => {
+        loveAnimation.setValue(0);
+      });
+    };
+
+    const loveStyle = {
+      transform: [
+        {
+          translateY: loveAnimation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [100, -200],
+          }),
+        },
+        {
+          scale: loveAnimation.interpolate({
+            inputRange: [0, 1, 1],
+            outputRange: [0, 5, 1],
+          }),
+        },
+      ],
+    };
+
+    const sheetRef = useRef(null);
+    const sheetRefAlbum = useRef(null);
+
+    const openBottomSheet = () => {
+      sheetRef.current?.open();
+    };
+
+    const openBottomSheetAlbum = () => {
+      sheetRefAlbum.current?.open();
+    };
+
+    const toggleMenu = () => {
+      setIsMenuExpanded(!isMenuExpanded);
+    };
+
+    const fetchGIFData = async () => {
+      setLoading(true);
+      try {
+        const response = await client.get(`get-photo/${id}`);
+        setGifData(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    useEffect(() => {
+      fetchGIFData();
+    }, [id]);
+
+    const {
+      judul_foto,
+      lokasi_file,
+      created_at,
+      comment,
+      like,
+      download,
+      user,
+      member,
+      kategori,
+    } = gifData;
+
+    const slicedComments = comment?.slice(0, 2);
+    console.log("sliced comment : ", slicedComments);
+
+    const formatDate = (dateString) => {
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      const formattedDate = new Date(dateString).toLocaleDateString(
+        "id-ID",
+        options
+      );
+      return formattedDate;
+    };
+
+    function formatTime(createdAt) {
+      const currentTime = new Date();
+      const commentTime = new Date(createdAt);
+      const timeDifference = currentTime - commentTime;
+
+      if (timeDifference > 7 * 24 * 3600 * 1000) {
+        return commentTime.toLocaleDateString();
+      } else if (timeDifference > 24 * 3600 * 1000) {
+        return Math.floor(timeDifference / (24 * 3600 * 1000)) + " h";
+      } else if (timeDifference > 3600 * 1000) {
+        return Math.floor(timeDifference / (3600 * 1000)) + " j";
+      } else if (timeDifference > 60 * 1000) {
+        return Math.floor(timeDifference / (60 * 1000)) + " m";
+      } else {
+        return "Baru saja";
+      }
     }
-  }, [isShining]);
 
-  const toggleLove = () => {
-    setIsLoved(!isLoved);
-    startLoveAnimation();
-  };
+    const placeholderImage = require("../assets/images/placeholder-image-3.png");
 
-  const toggleBookmark = () => {
-    setIsBookmark(!isBookmark);
-  };
+    console.log("======= GIF DETAIL DATA : ===========", gifData);
 
-  const startLoveAnimation = () => {
-    Animated.timing(loveAnimation, {
-      toValue: 1,
-      duration: 1500,
-      useNativeDriver: true,
-    }).start(() => {
-      loveAnimation.setValue(0);
-    });
-  };
-
-  const loveStyle = {
-    transform: [
-      {
-        translateY: loveAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [100, -200],
-        }),
-      },
-      {
-        scale: loveAnimation.interpolate({
-          inputRange: [0, 1, 1],
-          outputRange: [0, 5, 1],
-        }),
-      },
-    ],
-  };
-
-  const sheetRef = useRef(null);
-
-  const openBottomSheet = () => {
-    sheetRef.current?.open();
-  };
-
-  const toggleMenu = () => {
-    setIsMenuExpanded(!isMenuExpanded);
-  };
-
-  const fetchGIFData = async () => {
-    setLoading(true);
-    try {
-      const response = await client.get(`get-photo/${id}`);
-      setGifData(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchGIFData();
-  }, [id]);
-
-  const {
-    judul_foto,
-    lokasi_file,
-    created_at,
-    comment,
-    like,
-    download,
-    user,
-    member,
-    kategori,
-  } = gifData;
-
-  const slicedComments = comment?.slice(0, 2);
-  console.log("sliced comment : ", slicedComments);
-
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    const formattedDate = new Date(dateString).toLocaleDateString(
-      "id-ID",
-      options
-    );
-    return formattedDate;
-  };
-
-  function formatTime(createdAt) {
-    const currentTime = new Date();
-    const commentTime = new Date(createdAt);
-    const timeDifference = currentTime - commentTime;
-
-    if (timeDifference > 7 * 24 * 3600 * 1000) {
-      return commentTime.toLocaleDateString();
-    } else if (timeDifference > 24 * 3600 * 1000) {
-      return Math.floor(timeDifference / (24 * 3600 * 1000)) + " h";
-    } else if (timeDifference > 3600 * 1000) {
-      return Math.floor(timeDifference / (3600 * 1000)) + " j";
-    } else if (timeDifference > 60 * 1000) {
-      return Math.floor(timeDifference / (60 * 1000)) + " m";
-    } else {
-      return "Baru saja";
-    }
-  }
-
-  const placeholderImage = require("../assets/images/placeholder-image-3.png");
-
-  console.log("======= GIF DETAIL DATA : ===========", gifData);
-
-  return (
-    <BottomSheet
-      ref={ref}
-      style={styles.container}
-      animationType="slide"
-      height={height}
-      containerHeight={Dimensions.get("window").height + 75}
-    >
-      <View style={styles.contentContainer}>
-        <View style={styles.imageWrapper}>
-          {/* {user?.foto_profil ? (
-            <Image
-              source={{ uri: user?.foto_profil }}
-              style={{ width: 50, height: 50, borderRadius: 100 }}
-            />
-          ) : (
-            <Image
-              source={placeholderImage}
-              style={{ width: 50, height: 50, borderRadius: 100 }}
-            />
-          )} */}
-          <View style={styles.userAvatarContainer}>
-            {gifData.user?.foto_profil ? (
-              <Image
-                source={{ uri: gifData.user?.foto_profil }}
-                style={styles.userAvatar}
-              />
-            ) : (
-              <Image
-                source={require("../assets/images/placeholder-image-3.png")}
-                style={styles.userAvatar}
-              />
-            )}
-            {gifData?.user?.status === "2" && (
-              <Animated.View
-                style={[
-                  styles.crownWrapper,
-                  {
-                    opacity: shiningAnimation.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.2, 1],
-                    }),
-                  },
-                ]}
+    return (
+      <>
+        <BottomSheet
+          ref={ref}
+          style={styles.container}
+          animationType="slide"
+          height={height}
+          containerHeight={Dimensions.get("window").height + 75}
+        >
+          <View style={styles.contentContainer}>
+            <View style={styles.imageWrapper}>
+              <View style={styles.userAvatarContainer}>
+                {gifData.user?.foto_profil ? (
+                  <Image
+                    source={{ uri: gifData.user?.foto_profil }}
+                    style={styles.userAvatar}
+                  />
+                ) : (
+                  <Image
+                    source={require("../assets/images/placeholder-image-3.png")}
+                    style={styles.userAvatar}
+                  />
+                )}
+                {gifData?.user?.status === "2" && (
+                  <Animated.View
+                    style={[
+                      styles.crownWrapper,
+                      {
+                        opacity: shiningAnimation.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.2, 1],
+                        }),
+                      },
+                    ]}
+                  >
+                    <Foundation
+                      name="crown"
+                      size={16}
+                      color={"#FFBB48"}
+                      style={styles.crownIcon}
+                    />
+                  </Animated.View>
+                )}
+              </View>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.textBold}
               >
-                <Foundation
-                  name="crown"
-                  size={16}
-                  color={"#FFBB48"}
-                  style={styles.crownIcon}
+                {user?.username}
+              </Text>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.bottomSheetButton}
+                onPress={toggleLove}
+              >
+                <AntDesign
+                  name={"hearto"}
+                  style={{ color: "#A9329D", fontSize: 20 }}
                 />
-              </Animated.View>
-            )}
-          </View>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.textBold}>
-            {user?.username}
-          </Text>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.bottomSheetButton}
-            onPress={toggleLove}
-          >
-            <AntDesign
-              name={"hearto"}
-              style={{ color: "#A9329D", fontSize: 20 }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bottomSheetButton}
-            onPress={toggleBookmark}
-          >
-            <FontAwesome
-              name={isBookmark ? "bookmark" : "bookmark-o"}
-              style={{ color: "#A9329D", fontSize: 20 }}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: lokasi_file }}
-            style={styles.bottomSheetImage}
-          />
-          {isMenuExpanded ? (
-            <>
-              <View style={styles.downloadIcons}>
-                <TouchableOpacity
-                  style={styles.downloadIcon}
-                  onPress={toggleMenu}
-                >
-                  <Entypo
-                    name={"download"}
-                    style={{ color: "#FFF", fontSize: 16 }}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.menuIcons}>
-                <TouchableOpacity style={styles.menuIcon} onPress={toggleMenu}>
-                  <Entypo
-                    name={"share"}
-                    style={{ color: "#FFF", fontSize: 16 }}
-                  />
-                </TouchableOpacity>
-              </View>
-            </>
-          ) : (
-            <TouchableOpacity style={styles.moreButton} onPress={toggleMenu}>
-              <Feather
-                name={"more-horizontal"}
-                style={{ color: "#FFF", fontSize: 20 }}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={styles.bottomSheetTop}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={[styles.textBold, { fontSize: 24 }]}
-          >
-            {judul_foto}
-          </Text>
-          <Text style={[styles.text, { color: "#7C7C7C" }]}>
-            {formatDate(created_at)}
-          </Text>
-        </View>
-        <View style={styles.commentContainer}>
-          <Text style={[styles.text, { fontSize: 16 }]}>Komentar</Text>
-          {comment?.length > 3 && (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => openBottomSheet()}
-            >
-              <Feather
-                name={"more-horizontal"}
-                style={{ color: "#FFF", fontSize: 18 }}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={{ marginTop: 8 }}>
-          {comment?.length > 0 ? (
-            slicedComments.map((comment, index) => {
-              console.log("Photo comment : ", comment);
-              return (
-                <View style={styles.comment} key={index}>
-                  {comment.user.foto_profil ? (
-                    <Image
-                      source={{ uri: comment.user.foto_profil }}
-                      style={{ width: 40, height: 40, borderRadius: 50 }}
-                    />
-                  ) : (
-                    <Image
-                      source={placeholderImage}
-                      style={{ width: 35, height: 35, borderRadius: 100 }}
-                    />
-                  )}
-                  <View>
-                    <View style={styles.commentWrapper}>
-                      <Text style={styles.commentAuthor}>
-                        {comment?.user.nama_lengkap}
-                      </Text>
-                      <Text style={styles.commentHours}>
-                        {formatTime(comment.created_at)}
-                      </Text>
-                    </View>
-                    <Text style={styles.commentText}>
-                      {comment?.isi_komentar}
-                    </Text>
-                  </View>
-                </View>
-              );
-            })
-          ) : (
-            <View style={styles.addComment}>
-              <TextInput
-                style={styles.input}
-                placeholder="Tambahkan komentar"
-              />
-              <TouchableOpacity>
-                <Text style={styles.text}>Kirim</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.bottomSheetButton}
+                onPress={() => openBottomSheetAlbum()}
+              >
+                <FontAwesome
+                  name={"bookmark-o"}
+                  style={{ color: "#A9329D", fontSize: 20 }}
+                />
               </TouchableOpacity>
             </View>
-          )}
-        </View>
-      </ScrollView>
-
-      <Animated.View style={[styles.loveIcon, loveStyle]}>
-        <AntDesign name="heart" style={{ color: "#A9329D", fontSize: 30 }} />
-      </Animated.View>
-      <BottomSheetCommentUI ref={sheetRef} />
-    </BottomSheet>
-  );
-});
+          </View>
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: lokasi_file }}
+                style={styles.bottomSheetImage}
+              />
+              {isMenuExpanded ? (
+                <>
+                  <View style={styles.downloadIcons}>
+                    <TouchableOpacity
+                      style={styles.downloadIcon}
+                      onPress={toggleMenu}
+                    >
+                      <Entypo
+                        name={"download"}
+                        style={{ color: "#FFF", fontSize: 16 }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.menuIcons}>
+                    <TouchableOpacity
+                      style={styles.menuIcon}
+                      onPress={toggleMenu}
+                    >
+                      <Entypo
+                        name={"share"}
+                        style={{ color: "#FFF", fontSize: 16 }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : (
+                <TouchableOpacity
+                  style={styles.moreButton}
+                  onPress={toggleMenu}
+                >
+                  <Feather
+                    name={"more-horizontal"}
+                    style={{ color: "#FFF", fontSize: 20 }}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={styles.bottomSheetTop}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={[styles.textBold, { fontSize: 24 }]}
+              >
+                {judul_foto}
+              </Text>
+              <Text style={[styles.text, { color: "#7C7C7C" }]}>
+                {formatDate(created_at)}
+              </Text>
+            </View>
+            <View style={styles.commentContainer}>
+              <Text style={[styles.text, { fontSize: 16 }]}>Komentar</Text>
+              {comment?.length > 3 && (
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => openBottomSheet()}
+                >
+                  <Feather
+                    name={"more-horizontal"}
+                    style={{ color: "#FFF", fontSize: 18 }}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={{ marginTop: 8 }}>
+              {comment?.length > 0 ? (
+                slicedComments.map((comment, index) => {
+                  console.log("Photo comment : ", comment);
+                  return (
+                    <View style={styles.comment} key={index}>
+                      {comment.user.foto_profil ? (
+                        <Image
+                          source={{ uri: comment.user.foto_profil }}
+                          style={{ width: 40, height: 40, borderRadius: 50 }}
+                        />
+                      ) : (
+                        <Image
+                          source={placeholderImage}
+                          style={{ width: 35, height: 35, borderRadius: 100 }}
+                        />
+                      )}
+                      <View>
+                        <View style={styles.commentWrapper}>
+                          <Text style={styles.commentAuthor}>
+                            {comment?.user.nama_lengkap}
+                          </Text>
+                          <Text style={styles.commentHours}>
+                            {formatTime(comment.created_at)}
+                          </Text>
+                        </View>
+                        <Text style={styles.commentText}>
+                          {comment?.isi_komentar}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })
+              ) : (
+                <View style={styles.addComment}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Tambahkan komentar"
+                  />
+                  <TouchableOpacity>
+                    <Text style={styles.text}>Kirim</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </ScrollView>
+          <Animated.View style={[styles.loveIcon, loveStyle]}>
+            <AntDesign
+              name="heart"
+              style={{ color: "#A9329D", fontSize: 30 }}
+            />
+          </Animated.View>
+        </BottomSheet>
+        <BottomSheetCommentUI ref={sheetRef} />
+        <BottomSheetAlbumList ref={sheetRefAlbum} navigation={navigation} />
+      </>
+    );
+  }
+);
 
 export default BottomSheetGIF;
 

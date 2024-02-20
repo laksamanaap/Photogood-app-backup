@@ -67,34 +67,9 @@ const BottomSheetUI = forwardRef(({ height }, ref) => {
       ref={ref}
       style={styles.container}
       animationType="slide"
-      height={height}
       containerHeight={Dimensions.get("window").height + 75}
     >
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <View style={styles.imagePreview}>
-          {image && (
-            <Image source={{ uri: image }} style={styles.previewImage} />
-          )}
-          {!image && (
-            <Text style={{ fontFamily: "Poppins-Regular" }}>
-              No image selected
-            </Text>
-          )}
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => pickImage(ImagePicker.MediaTypeOptions.Images)}
-          >
-            <Text style={styles.buttonText}>Unggah Gambar</Text>
-          </TouchableOpacity>
-          <Text>Atau</Text>
-          <TouchableOpacity style={styles.button} onPress={pickFromCamera}>
-            <Text style={styles.buttonText}>Kamera</Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={{ width: "100%", marginTop: 30 }}>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Nama Album</Text>

@@ -31,7 +31,7 @@ import RenderMasonryVector from "../components/RenderMasonryVector";
 
 import client from "../utils/client";
 
-export default function Home(props) {
+export default function Home({ navigation }) {
   const [searchResults, setSearchResults] = useState([]);
 
   const [selectedCardID, setSelectedCardID] = useState(null);
@@ -315,7 +315,12 @@ export default function Home(props) {
         name={selectedCardName}
         image={selectedCardImage}
       />
-      <BottomSheetGIF ref={sheetRefGIF} height={685} id={selectedGIFID} />
+      <BottomSheetGIF
+        ref={sheetRefGIF}
+        height={685}
+        id={selectedGIFID}
+        navigation={navigation}
+      />
     </>
   );
 }
