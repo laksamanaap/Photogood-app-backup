@@ -75,6 +75,11 @@ export default function Album({ navigation }) {
     }
   };
 
+  const handleAlbumSearchResults = (results) => {
+    console.log(results, "RESULT SEARCH ALBUM");
+    setAlbum(results);
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -94,7 +99,7 @@ export default function Album({ navigation }) {
             <AntDesign name="pluscircle" size={25} color="#A9329D" />
           </TouchableOpacity>
         </View>
-        <SearchAlbum />
+        <SearchAlbum onSearchResults={handleAlbumSearchResults} />
       </View>
       <ScrollView
         refreshControl={

@@ -32,7 +32,7 @@ const SearchPhotos = ({ onSearchResults }) => {
         `/search-photo?judul_foto=${searchQuery}&deskripsi_foto=${searchQuery}`
       );
       console.log("Response in searching : ", response.data);
-      onSearchResults(response.data);
+      onSearchResults(response?.data);
     } catch (error) {
       console.log("Error searching photos:", error);
       Alert.alert("An error occured!", error?.response.data.message);
