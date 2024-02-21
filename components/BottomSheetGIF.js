@@ -11,6 +11,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import BottomSheetCommentUI from "./BottomSheetCommentUI";
 import BottomSheet from "@devvie/bottom-sheet";
@@ -20,6 +21,7 @@ import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
 import Foundation from "react-native-vector-icons/Foundation";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import client from "../utils/client";
 import BottomSheetAlbumList from "./BottomSheetAlbumList";
 
@@ -31,7 +33,12 @@ const BottomSheetGIF = forwardRef(
     const [isLoved, setIsLoved] = useState(false);
     const [isBookmark, setIsBookmark] = useState(false);
     const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+
+    const [userData, setUserData] = useState(null);
+    const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [commentValue, setCommentValue] = useState("");
 
     const loveAnimation = useRef(new Animated.Value(0)).current;
     const [isShining, setIsShining] = useState(false);
@@ -112,6 +119,30 @@ const BottomSheetGIF = forwardRef(
       setIsMenuExpanded(!isMenuExpanded);
     };
 
+    const getTokenFromStorage = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem("token");
+        if (storedToken !== null) {
+          setToken(storedToken);
+          console.log("token settings : ", storedToken);
+        }
+      } catch (error) {
+        console.error("Error retrieving token:", error);
+      }
+    };
+
+    const fetchUserDetail = async () => {
+      try {
+        const response = await client.get(`v1/show-user-detail?token=${token}`);
+        console.log("upload user detail : ", response?.data);
+        setUserData(response?.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const fetchGIFData = async () => {
       setLoading(true);
       try {
@@ -124,6 +155,8 @@ const BottomSheetGIF = forwardRef(
     };
 
     useEffect(() => {
+      getTokenFromStorage();
+      fetchUserDetail();
       fetchGIFData();
     }, [id]);
 
@@ -172,7 +205,34 @@ const BottomSheetGIF = forwardRef(
 
     const placeholderImage = require("../assets/images/placeholder-image-3.png");
 
-    console.log("======= GIF DETAIL DATA : ===========", gifData);
+    const onRefresh = async () => {
+      setRefreshing(true);
+      try {
+        await fetchGIFData();
+      } catch (error) {
+        console.error("Error refreshing user detail:", error);
+      } finally {
+        setRefreshing(false);
+      }
+    };
+
+    const storeUserComment = async () => {
+      try {
+        const payload = {
+          foto_id: String(foto_id),
+          user_id: String(userData?.user_id),
+          isi_komentar: commentValue,
+        };
+        const response = await client.post(
+          `v1/store-guest-comment?token=${token}`,
+          payload
+        );
+        console.log(response?.data, "COMMENT PHOTO RESPONSE");
+        onRefresh();
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     return (
       <>
@@ -247,12 +307,24 @@ const BottomSheetGIF = forwardRef(
               </TouchableOpacity>
             </View>
           </View>
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
             <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: lokasi_file }}
-                style={styles.bottomSheetImage}
-              />
+              {lokasi_file ? (
+                <Image
+                  source={{ uri: lokasi_file }}
+                  style={styles.bottomSheetImage}
+                />
+              ) : (
+                <Image
+                  source={require("../assets/images/placeholder-image-3.png")}
+                  style={styles.bottomSheetImage}
+                />
+              )}
               {isMenuExpanded ? (
                 <>
                   <View style={styles.downloadIcons}>
@@ -303,8 +375,10 @@ const BottomSheetGIF = forwardRef(
               </Text>
             </View>
             <View style={styles.commentContainer}>
-              <Text style={[styles.text, { fontSize: 16 }]}>Komentar</Text>
-              {comment?.length > 3 && (
+              <Text style={[styles.text, { fontSize: 16, color: "#000000" }]}>
+                Komentar
+              </Text>
+              {comment?.length >= 2 ? (
                 <TouchableOpacity
                   style={styles.button}
                   onPress={() => openBottomSheet()}
@@ -314,12 +388,18 @@ const BottomSheetGIF = forwardRef(
                     style={{ color: "#FFF", fontSize: 18 }}
                   />
                 </TouchableOpacity>
+              ) : (
+                <TouchableOpacity style={styles.buttonDisabled} disabled>
+                  <Feather
+                    name={"more-horizontal"}
+                    style={{ color: "#FFF", fontSize: 18 }}
+                  />
+                </TouchableOpacity>
               )}
             </View>
             <View style={{ marginTop: 8 }}>
-              {comment?.length > 0 ? (
+              {comment?.length > 0 &&
                 slicedComments.map((comment, index) => {
-                  console.log("Photo comment : ", comment);
                   return (
                     <View style={styles.comment} key={index}>
                       {comment.user.foto_profil ? (
@@ -330,13 +410,14 @@ const BottomSheetGIF = forwardRef(
                       ) : (
                         <Image
                           source={placeholderImage}
-                          style={{ width: 35, height: 35, borderRadius: 100 }}
+                          style={{ width: 40, height: 40, borderRadius: 100 }}
                         />
                       )}
                       <View>
                         <View style={styles.commentWrapper}>
                           <Text style={styles.commentAuthor}>
-                            {comment?.user.nama_lengkap}
+                            {comment?.user.nama_lengkap ||
+                              comment?.user.username}
                           </Text>
                           <Text style={styles.commentHours}>
                             {formatTime(comment.created_at)}
@@ -348,14 +429,18 @@ const BottomSheetGIF = forwardRef(
                       </View>
                     </View>
                   );
-                })
-              ) : (
+                })}
+              {comment?.length < 2 && (
                 <View style={styles.addComment}>
                   <TextInput
                     style={styles.input}
                     placeholder="Tambahkan komentar"
+                    onChangeText={(text) => setCommentValue(text)}
                   />
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={storeUserComment}
+                    style={styles.textButton}
+                  >
                     <Text style={styles.text}>Kirim</Text>
                   </TouchableOpacity>
                 </View>
@@ -369,7 +454,13 @@ const BottomSheetGIF = forwardRef(
             />
           </Animated.View>
         </BottomSheet>
-        <BottomSheetCommentUI ref={sheetRef} />
+        <BottomSheetCommentUI
+          user_id={userData?.user_id}
+          foto_id={foto_id}
+          ref={sheetRef}
+          comment={comment}
+          onRefresh={onRefresh}
+        />
         <BottomSheetAlbumList
           ref={sheetRefAlbum}
           navigation={navigation}
@@ -567,6 +658,25 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     color: "white",
   },
+  textButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#A9329D",
+    borderRadius: 4,
+    padding: 4,
+    width: 50,
+  },
+  buttonDisabled: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "gray",
+    padding: 4,
+    borderRadius: 50,
+    color: "white",
+    opacity: 0.5,
+  },
   buttonDownload: {
     display: "flex",
     justifyContent: "center",
@@ -608,7 +718,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   text: {
+    fontSize: 12,
     fontFamily: "Poppins-Regular",
+    color: "white",
   },
   textBold: {
     fontFamily: "Poppins-Bold",

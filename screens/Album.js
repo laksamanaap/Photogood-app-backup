@@ -33,7 +33,6 @@ export default function Album({ navigation }) {
   const sheetRef = useRef(null);
 
   const handleNavigation = (albumID) => {
-    // console.log(albumID, "=============== ALBUM ID ======================");
     navigation.navigate("AlbumDetail", { id_album: albumID });
   };
 

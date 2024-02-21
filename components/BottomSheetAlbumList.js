@@ -214,11 +214,16 @@ const BottomSheetUI = forwardRef(({ height, navigation, foto_id }, ref) => {
             </View>
           </View>
         )}
-        <View style={styles.buttonWrapper}>
-          <TouchableOpacity style={styles.button} onPress={storeMemberBookmark}>
-            <Text style={styles.buttonText}>Tambah Foto</Text>
-          </TouchableOpacity>
-        </View>
+        {album.length > 0 && (
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={storeMemberBookmark}
+            >
+              <Text style={styles.buttonText}>Tambah Foto</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </BottomSheet>
   );
