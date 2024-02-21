@@ -25,8 +25,6 @@ import BottomSheetAlbumList from "./BottomSheetAlbumList";
 
 const BottomSheetGIF = forwardRef(
   ({ height, id, name, image, navigation }, ref) => {
-    console.log("gif id : ", id);
-
     const [gifData, setGifData] = useState({});
     const [commentData, setCommentData] = useState([]);
 
@@ -130,6 +128,7 @@ const BottomSheetGIF = forwardRef(
     }, [id]);
 
     const {
+      foto_id,
       judul_foto,
       lokasi_file,
       created_at,
@@ -297,7 +296,7 @@ const BottomSheetGIF = forwardRef(
                 ellipsizeMode="tail"
                 style={[styles.textBold, { fontSize: 24 }]}
               >
-                {judul_foto}
+                {judul_foto} - {foto_id}
               </Text>
               <Text style={[styles.text, { color: "#7C7C7C" }]}>
                 {formatDate(created_at)}
@@ -371,7 +370,11 @@ const BottomSheetGIF = forwardRef(
           </Animated.View>
         </BottomSheet>
         <BottomSheetCommentUI ref={sheetRef} />
-        <BottomSheetAlbumList ref={sheetRefAlbum} navigation={navigation} />
+        <BottomSheetAlbumList
+          ref={sheetRefAlbum}
+          navigation={navigation}
+          foto_id={foto_id}
+        />
       </>
     );
   }

@@ -7,10 +7,12 @@ import {
   Dimensions,
   View,
   TouchableOpacity,
+  RefreshControl,
   Animated,
   Platform,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import BottomSheet from "@devvie/bottom-sheet";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -23,21 +25,26 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import client from "../utils/client";
 
-const BottomSheetUI = forwardRef(({ height, navigation }, ref) => {
-  const [image, setImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isChecked, setIsChecked] = useState(false); // State untuk menandai apakah checkbox dicentang
+const BottomSheetUI = forwardRef(({ height, navigation, foto_id }, ref) => {
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
-  const sheetRef = useRef(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [albumID, setAlbumID] = useState(null);
   const [album, setAlbum] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
 
   const handleCheckboxChange = (albumID) => {
-    console.log(albumID, "ALBUM ID FROM BOTTOM SHEET");
-    setCheckedItems({
-      ...checkedItems,
-      [albumID]: !checkedItems[albumID],
+    const updatedCheckedItems = {};
+    Object.keys(checkedItems).forEach((key) => {
+      updatedCheckedItems[key] = false;
     });
+
+    updatedCheckedItems[albumID] = true;
+
+    setAlbumID(albumID);
+    setCheckedItems(updatedCheckedItems);
   };
 
   const getTokenFromStorage = async () => {
@@ -63,12 +70,62 @@ const BottomSheetUI = forwardRef(({ height, navigation }, ref) => {
     }
   };
 
+  const fetchUserDetail = async () => {
+    try {
+      const response = await client.get(`v1/show-user-detail?token=${token}`);
+      console.log("album list user detail : ", response?.data);
+      setUserData(response?.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getTokenFromStorage();
+    fetchUserDetail();
     fetchMemberAlbum();
   }, []);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchMemberAlbum();
+    } catch (error) {
+      console.error("Error refreshing album list:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const storeMemberBookmark = async () => {
+    try {
+      const payload = {
+        foto_id: String(foto_id),
+        album_id: String(albumID),
+        user_id: String(userData?.user_id),
+      };
+      const response = await client.post(
+        `v2/store-bookmark?token=${token}`,
+        payload
+      );
+      console.log(payload, "PAYLOAD ON MEMBER ALBUM RAWWRR");
+      console.log(response?.data, "RESPONSE STORE MEMBER ALBUM RAWWWRR");
+      Alert.alert("Success!", "Berhasil menambahkan foto ke album!", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Album"),
+        },
+      ]);
+    } catch (error) {
+      // console.error(error);
+      Alert.alert("An error occured!", `${error?.response?.data.message}`);
+    }
+  };
+
   console.log(album, "ALBUM DATA : ");
+  console.log(albumID, "ALBUM ID FROM BOTTOM SHEET");
 
   return (
     <BottomSheet
@@ -77,7 +134,11 @@ const BottomSheetUI = forwardRef(({ height, navigation }, ref) => {
       animationType="slide"
       containerHeight={Dimensions.get("window").height + 75}
     >
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {album.length > 0 ? (
           album.map((item, index) => (
             <View style={styles.card} key={index}>
@@ -104,21 +165,27 @@ const BottomSheetUI = forwardRef(({ height, navigation }, ref) => {
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity
-                onPress={() => handleCheckboxChange(item?.album_id)}
-                style={styles.checkboxContainer}
-              >
-                <View
-                  style={[
-                    styles.checkbox,
-                    checkedItems[item.album_id] && styles.checked,
-                  ]}
+              <View style={styles.checkboxContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (!checkedItems[item.album_id]) {
+                      handleCheckboxChange(item?.album_id);
+                    }
+                  }}
+                  style={styles.checkbox}
                 >
-                  {checkedItems[item.album_id] && (
-                    <View style={styles.innerCircle} />
-                  )}
-                </View>
-              </TouchableOpacity>
+                  <View
+                    style={[
+                      styles.checkbox,
+                      checkedItems[item.album_id] && styles.checked,
+                    ]}
+                  >
+                    {checkedItems[item.album_id] && (
+                      <View style={styles.innerCircle} />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           ))
         ) : (
@@ -139,11 +206,8 @@ const BottomSheetUI = forwardRef(({ height, navigation }, ref) => {
           </View>
         )}
         <View style={styles.buttonWrapper}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Album")}
-          >
-            <Text style={styles.buttonText}>Tambah Album</Text>
+          <TouchableOpacity style={styles.button} onPress={storeMemberBookmark}>
+            <Text style={styles.buttonText}>Tambah Foto</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
