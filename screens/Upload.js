@@ -108,20 +108,38 @@ export default function Upload() {
 
     try {
       const formData = new FormData();
-      formData.append("images", {
-        uri: image,
-        name: "photo.jpg",
-        type: "image/jpeg",
-      });
+
+      const imageUriParts = image.split(".");
+      const imageExtension = imageUriParts[imageUriParts.length - 1];
+      const imageType = `image/${imageExtension}`;
+
+      if (
+        imageType === "image/jpeg" ||
+        imageType === "image/png" ||
+        imageType === "image/jpg" ||
+        imageType === "image/gif" ||
+        imageType === "image/svg"
+      ) {
+        formData.append("images", {
+          uri: image,
+          name: "photo.jpg",
+          type: imageType,
+        });
+      } else {
+        Alert.alert("Error", "Only image files are allowed.");
+        setIsLoading(false);
+        return;
+      }
+
       // Temporary
       formData.append("judul_foto", "laksa");
       formData.append("deskripsi_foto", "melody");
-      formData.append("user_id", "1");
+      formData.append("user_id", userData?.user_id);
       formData.append("kategori_id", "1");
       formData.append("type_foto", "GIF");
       formData.append("status", "1");
 
-      const responseGuest = await client.post(
+      const responseMember = await client.post(
         "/v1/store-guest-photo",
         formData,
         {
@@ -132,8 +150,7 @@ export default function Upload() {
         }
       );
 
-      console.log("ResponseGuest Upload Photo:", responseGuest.data);
-
+      console.log("responseMember Upload Photo:", responseMember.data);
       Alert.alert(
         "Success",
         "Foto berhasil diunggah",
@@ -148,8 +165,9 @@ export default function Upload() {
         { cancelable: false }
       );
     } catch (error) {
-      // console.error("Error:", error);
+      console.error("Error:", error);
       Alert.alert("An error occured", error?.response.data.message);
+      setIsLoading(false);
     }
 
     setIsLoading(false);
@@ -170,11 +188,29 @@ export default function Upload() {
 
     try {
       const formData = new FormData();
-      formData.append("images", {
-        uri: image,
-        name: "photo.jpg",
-        type: "image/jpeg",
-      });
+
+      const imageUriParts = image.split(".");
+      const imageExtension = imageUriParts[imageUriParts.length - 1];
+      const imageType = `image/${imageExtension}`;
+
+      if (
+        imageType === "image/jpeg" ||
+        imageType === "image/png" ||
+        imageType === "image/jpg" ||
+        imageType === "image/gif" ||
+        imageType === "image/svg"
+      ) {
+        formData.append("images", {
+          uri: image,
+          name: "photo.jpg",
+          type: imageType,
+        });
+      } else {
+        Alert.alert("Error", "Only image files are allowed.");
+        setIsLoading(false);
+        return;
+      }
+
       // Temporary
       formData.append("judul_foto", "laksa");
       formData.append("deskripsi_foto", "melody");
@@ -196,7 +232,6 @@ export default function Upload() {
       );
 
       console.log("responseMember Upload Photo:", responseMember.data);
-
       Alert.alert(
         "Success",
         "Foto berhasil diunggah",
@@ -213,6 +248,7 @@ export default function Upload() {
     } catch (error) {
       console.error("Error:", error);
       Alert.alert("An error occured", error?.response.data.message);
+      setIsLoading(false);
     }
 
     setIsLoading(false);
@@ -227,6 +263,7 @@ export default function Upload() {
       console.error("Error refreshing user detail:", error);
     } finally {
       setRefreshing(false);
+      setIsLoading(false);
     }
   };
 
