@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import Card from "../components/Card";
+import { useRoute } from "@react-navigation/native";
 
 import SearchGIF from "../components/SearchGIF";
 import SearchPhotos from "../components/SearchPhotos";
@@ -32,12 +33,17 @@ import RenderMasonryVector from "../components/RenderMasonryVector";
 import client from "../utils/client";
 
 export default function Home({ navigation }) {
+  const route = useRoute();
+  const routes = route;
+  const handleRefresh = routes?.params?.onRefreshHome;
+
   const [searchResults, setSearchResults] = useState([]);
 
   const [selectedCardID, setSelectedCardID] = useState(null);
   const [selectedCardName, setSelectedCardName] = useState(null);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
 
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [selectedGIFID, setSelectedGIFID] = useState(null);
@@ -185,11 +191,11 @@ export default function Home({ navigation }) {
   };
 
   useEffect(() => {
+    if (handleRefresh) {
+      handleRefresh();
+    }
     fetchData();
-    // const interval = setInterval(fetchData, 8000);
-
-    // return () => clearInterval(interval);
-  }, []);
+  }, [handleRefresh]);
 
   console.log("gif data from home : ", gif);
   console.log(searchResults, "=============== Search Results ===============");

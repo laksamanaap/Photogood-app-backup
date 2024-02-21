@@ -150,7 +150,7 @@ export default function Album({ navigation }) {
           </View>
         )}
       </ScrollView>
-      <BottomSheetUI ref={sheetRef} height={600} />
+      <BottomSheetUI ref={sheetRef} height={600} onRefresh={onRefresh} />
     </>
   );
 }

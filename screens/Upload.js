@@ -141,7 +141,7 @@ export default function Upload() {
           {
             text: "OK",
             onPress: () => {
-              navigation.navigate("Home");
+              navigation.navigate("Home", { onRefreshHome: onRefreshHome });
             },
           },
         ],
@@ -204,7 +204,7 @@ export default function Upload() {
           {
             text: "OK",
             onPress: () => {
-              navigation.navigate("Home");
+              navigation.navigate("Home", { onRefreshHome: onRefreshHome });
             },
           },
         ],
@@ -223,6 +223,56 @@ export default function Upload() {
     setRefreshing(true);
     try {
       await fetchUserDetail();
+    } catch (error) {
+      console.error("Error refreshing user detail:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // Fetch Data
+  const fetchGIFData = async () => {
+    try {
+      const response = await client.get("/get-all-gif");
+      setGIF(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchPhotoData = async () => {
+    try {
+      const response = await client.get("/get-all-photo");
+      setPhoto(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchVectorData = async () => {
+    try {
+      const response = await client.get("/get-all-vector");
+      setVector(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      await fetchGIFData();
+      await fetchPhotoData();
+      await fetchVectorData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onRefreshHome = async () => {
+    console.log("============= REFRESHING HOME ===============");
+    setRefreshing(true);
+    try {
+      await fetchData();
     } catch (error) {
       console.error("Error refreshing user detail:", error);
     } finally {

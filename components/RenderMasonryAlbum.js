@@ -77,7 +77,9 @@ const RenderMasonryList = ({ album, photo, navigation }) => {
                   />
                 )}
               </View>
-              <Text style={styles.cardText}>{item.nama_album}</Text>
+              <Text style={[styles.cardText, { flex: 1 }]} numberOfLines={1}>
+                {item.nama_album}
+              </Text>
               <Text style={styles.cardTextSmall}>
                 {item.total_bookmark_data}
               </Text>

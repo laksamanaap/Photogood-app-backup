@@ -159,8 +159,17 @@ const BottomSheetUI = forwardRef(({ height, navigation, foto_id }, ref) => {
                   />
                 )}
                 <View style={styles.cardAlbumTextWrapper}>
-                  <Text style={styles.cardTextTitle}>{item?.nama_album}</Text>
-                  <Text style={styles.cardTextSubtitle}>
+                  <Text
+                    style={[styles.cardTextTitle, { width: 200 }]}
+                    numberOfLines={1}
+                  >
+                    {item?.nama_album}
+                  </Text>
+
+                  <Text
+                    style={[styles.cardTextSubtitle, { width: 200 }]}
+                    numberOfLines={1}
+                  >
                     {item?.deskripsi_album}
                   </Text>
                 </View>

@@ -11,6 +11,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import BottomSheet from "@devvie/bottom-sheet";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -19,48 +20,75 @@ import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
 import Foundation from "react-native-vector-icons/Foundation";
 import * as ImagePicker from "expo-image-picker";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import client from "../utils/client";
 
-const BottomSheetUI = forwardRef(({ height }, ref) => {
+const BottomSheetUI = forwardRef(({ height, onRefresh }, ref) => {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [formData, setFormData] = useState({
+    namaAlbum: "",
+    deskripsiAlbum: "",
+  });
   const sheetRef = useRef(null);
 
-  const openBottomSheet = () => {
-    sheetRef.current?.open();
-  };
-
-  const toggleMenu = () => {
-    setIsMenuExpanded(!isMenuExpanded);
-  };
-
-  const placeholderImage = require("../assets/images/placeholder-image-3.png");
-  const pickImage = async (sourceType) => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-      sourceType: sourceType,
-    });
-
-    if (!result.cancelled) {
-      setImage(result.assets[0].uri);
+  const getTokenFromStorage = async () => {
+    try {
+      const storedToken = await AsyncStorage.getItem("token");
+      if (storedToken !== null) {
+        setToken(storedToken);
+        console.log("token settings : ", storedToken);
+      }
+    } catch (error) {
+      console.error("Error retrieving token:", error);
     }
   };
 
-  const pickFromCamera = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setImage(result.assets[0].uri);
+  const fetchUserDetail = async () => {
+    try {
+      const response = await client.get(`v1/show-user-detail?token=${token}`);
+      console.log("album list user detail : ", response?.data);
+      setUserData(response?.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const storeMemberAlbum = async () => {
+    try {
+      const payload = {
+        user_id: String(userData?.user_id),
+        nama_album: formData?.namaAlbum,
+        deskripsi_album: formData?.deskripsiAlbum,
+      };
+      const response = await client.post(
+        `v2/store-album?token=${token}`,
+        payload
+      );
+      console.log(response?.data, "RESPONSE IN BOTTOM SHEET ALBUM");
+      if (response?.status === 200) {
+        onRefresh();
+        Alert.alert("Success", "Album berhasil ditambahkan!");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("An error occured!", error?.response?.data.message);
+    }
+  };
+
+  useEffect(() => {
+    getTokenFromStorage();
+    fetchUserDetail();
+  }, []);
+
+  console.log(formData, "BOTTOM SHEET ALBUM DATA FORM VALUE : ");
 
   return (
     <BottomSheet
@@ -73,11 +101,25 @@ const BottomSheetUI = forwardRef(({ height }, ref) => {
         <View style={{ width: "100%", marginTop: 30 }}>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Nama Album</Text>
-            <TextInput style={styles.input} placeholder="Nama Album" />
+            <TextInput
+              style={styles.input}
+              placeholder="Nama Album"
+              value={formData.namaAlbum}
+              onChangeText={(text) =>
+                setFormData({ ...formData, namaAlbum: text })
+              }
+            />
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Deskripsi Album</Text>
-            <TextInput style={styles.input} placeholder="Deskripsi Album" />
+            <TextInput
+              style={styles.input}
+              placeholder="Deskripsi Album"
+              value={formData.deskripsiAlbum}
+              onChangeText={(text) =>
+                setFormData({ ...formData, deskripsiAlbum: text })
+              }
+            />
           </View>
           <View>
             <TouchableOpacity
@@ -85,9 +127,10 @@ const BottomSheetUI = forwardRef(({ height }, ref) => {
                 styles.button,
                 { backgroundColor: isLoading ? "#ccc" : "#A9329D" },
               ]}
+              onPress={storeMemberAlbum}
             >
               <Text style={styles.buttonText}>
-                {isLoading ? "Mengunggah..." : "Buat Album"}
+                {isLoading ? "Menambahkan Album..." : "Buat Album"}
               </Text>
             </TouchableOpacity>
           </View>
