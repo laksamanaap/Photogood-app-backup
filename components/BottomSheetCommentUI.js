@@ -91,7 +91,17 @@ const BottomSheetCommentUI = forwardRef(
         animationType="slide"
         containerHeight={Dimensions.get("window").height + 75}
       >
-        <Text style={[styles.text, { marginBottom: 12, textAlign: "center" }]}>
+        <Text
+          style={[
+            styles.text,
+            {
+              marginBottom: 12,
+              textAlign: "center",
+              fontSize: 14,
+              color: "#000000",
+            },
+          ]}
+        >
           {comment?.length} Komentar
         </Text>
         <ScrollView>
@@ -134,7 +144,9 @@ const BottomSheetCommentUI = forwardRef(
               onChangeText={handleCommentChange}
             />
             <TouchableOpacity onPress={storeUserComment}>
-              <Text style={styles.text}>Kirim</Text>
+              <View style={styles.textButton}>
+                <Text style={styles.text}>Kirim</Text>
+              </View>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -206,5 +218,16 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: "Poppins-Bold",
+    fontSize: 12,
+    color: "white",
+  },
+  textButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#A9329D",
+    borderRadius: 4,
+    padding: 4,
+    width: 50,
   },
 });

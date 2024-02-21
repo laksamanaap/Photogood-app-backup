@@ -370,7 +370,16 @@ const BottomSheetGIF = forwardRef(
               >
                 {judul_foto} - {foto_id}
               </Text>
-              <Text style={[styles.text, { color: "#7C7C7C" }]}>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    color: "#7C7C7C",
+                    fontSize: 14,
+                    fontFamily: "Poppins-Regular",
+                  },
+                ]}
+              >
                 {formatDate(created_at)}
               </Text>
             </View>
@@ -400,19 +409,42 @@ const BottomSheetGIF = forwardRef(
             <View style={{ marginTop: 8 }}>
               {comment?.length > 0 &&
                 slicedComments.map((comment, index) => {
+                  console.log(comment, "SLICED COMMENT DATA");
                   return (
                     <View style={styles.comment} key={index}>
-                      {comment.user.foto_profil ? (
-                        <Image
-                          source={{ uri: comment.user.foto_profil }}
-                          style={{ width: 40, height: 40, borderRadius: 50 }}
-                        />
-                      ) : (
-                        <Image
-                          source={placeholderImage}
-                          style={{ width: 40, height: 40, borderRadius: 100 }}
-                        />
-                      )}
+                      <View style={styles.userAvatarContainer}>
+                        {comment?.user.foto_profil ? (
+                          <Image
+                            source={{ uri: comment.user.foto_profil }}
+                            style={{ width: 40, height: 40, borderRadius: 50 }}
+                          />
+                        ) : (
+                          <Image
+                            source={placeholderImage}
+                            style={{ width: 40, height: 40, borderRadius: 100 }}
+                          />
+                        )}
+                        {comment?.user?.status === "2" && (
+                          <Animated.View
+                            style={[
+                              styles.crownWrapperComment,
+                              {
+                                opacity: shiningAnimation.interpolate({
+                                  inputRange: [0, 1],
+                                  outputRange: [0.2, 1],
+                                }),
+                              },
+                            ]}
+                          >
+                            <Foundation
+                              name="crown"
+                              size={13}
+                              color={"#FFBB48"}
+                              style={styles.crownIconComment}
+                            />
+                          </Animated.View>
+                        )}
+                      </View>
                       <View>
                         <View style={styles.commentWrapper}>
                           <Text style={styles.commentAuthor}>
@@ -506,6 +538,29 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   crownIcon: {
+    opacity: 0.5,
+  },
+  crownWrapperComment: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    transform: [{ translateX: 3 }, { translateY: -25 }],
+    flexDirection: "row",
+    justifyContent: "center",
+    backgroundColor: "white",
+    padding: 4,
+    minWidth: 20,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    elevation: 5,
+  },
+  crownIconComment: {
     opacity: 0.5,
   },
   loadingContainer: {
@@ -719,7 +774,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-    fontFamily: "Poppins-Regular",
+    fontFamily: "Poppins-Bold",
     color: "white",
   },
   textBold: {
