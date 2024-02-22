@@ -328,10 +328,7 @@ const BottomSheetGIF = forwardRef(
               {isMenuExpanded ? (
                 <>
                   <View style={styles.downloadIcons}>
-                    <TouchableOpacity
-                      style={styles.downloadIcon}
-                      onPress={toggleMenu}
-                    >
+                    <TouchableOpacity style={styles.downloadIcon}>
                       <Entypo
                         name={"download"}
                         style={{ color: "#FFF", fontSize: 16 }}
@@ -491,6 +488,7 @@ const BottomSheetGIF = forwardRef(
           foto_id={foto_id}
           ref={sheetRef}
           comment={comment}
+          status={userData?.status}
           onRefresh={onRefresh}
         />
         <BottomSheetAlbumList
