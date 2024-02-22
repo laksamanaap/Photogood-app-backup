@@ -12,6 +12,7 @@ import {
   TextInput,
   ActivityIndicator,
   RefreshControl,
+  Alert,
 } from "react-native";
 import BottomSheetCommentUI from "./BottomSheetCommentUI";
 import BottomSheet from "@devvie/bottom-sheet";
@@ -20,6 +21,10 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Entypo from "react-native-vector-icons/Entypo";
 import Feather from "react-native-vector-icons/Feather";
 import Foundation from "react-native-vector-icons/Foundation";
+
+// import { Permissions, MediaLibrary } from "expo";
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import client from "../utils/client";
@@ -37,6 +42,7 @@ const BottomSheetGIF = forwardRef(
     const [userData, setUserData] = useState(null);
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [downloadLoading, setDownloadLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [commentValue, setCommentValue] = useState("");
 
@@ -234,6 +240,51 @@ const BottomSheetGIF = forwardRef(
       }
     };
 
+    const saveToGallery = async (lokasi_file, judul_foto) => {
+      console.log(lokasi_file, "LOKASI FILE FOTO DOWNLOAD");
+      setDownloadLoading(true);
+
+      try {
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+
+        if (status !== "granted") {
+          alert(
+            "Izin untuk mengakses galeri diperlukan untuk menyimpan gambar."
+          );
+          return;
+        }
+
+        const fileExtension = lokasi_file.split(".").pop();
+        const localUri = `${FileSystem.documentDirectory}${judul_foto}.${fileExtension}`;
+
+        const { uri } = await FileSystem.downloadAsync(lokasi_file, localUri);
+        await MediaLibrary.saveToLibraryAsync(uri);
+
+        setDownloadLoading(false);
+        Alert.alert("Success", "Gambar berhasil disimpan ke galeri.");
+      } catch (error) {
+        Alert.alert("An error occured!", error.message);
+        console.error(error);
+      }
+    };
+
+    const LoadingOverlay = ({ visible }) => {
+      return (
+        <Modal
+          transparent
+          animationType="fade"
+          visible={visible}
+          onRequestClose={() => {}}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.indicatorContainer}>
+              <ActivityIndicator size="large" color="#fff" />
+            </View>
+          </View>
+        </Modal>
+      );
+    };
+
     return (
       <>
         <BottomSheet
@@ -328,11 +379,19 @@ const BottomSheetGIF = forwardRef(
               {isMenuExpanded ? (
                 <>
                   <View style={styles.downloadIcons}>
-                    <TouchableOpacity style={styles.downloadIcon}>
-                      <Entypo
-                        name={"download"}
-                        style={{ color: "#FFF", fontSize: 16 }}
-                      />
+                    <TouchableOpacity
+                      style={styles.downloadIcon}
+                      onPress={() => saveToGallery(lokasi_file, judul_foto)}
+                      disabled={downloadLoading}
+                    >
+                      {downloadLoading ? (
+                        <ActivityIndicator size="small" color="#FFF" />
+                      ) : (
+                        <Entypo
+                          name={"download"}
+                          style={{ color: "#FFF", fontSize: 16 }}
+                        />
+                      )}
                     </TouchableOpacity>
                   </View>
                   <View style={styles.menuIcons}>
